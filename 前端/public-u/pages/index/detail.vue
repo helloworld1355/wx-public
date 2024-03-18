@@ -325,7 +325,7 @@
 		flex-direction: column;
 		/* justify-content: center; */
 		/* align-items: center;  */
-		height: 100vh;  
+		height: 100vh-50px;  
 		position: relative;
 		background: whitesmoke;
 	}
@@ -357,7 +357,7 @@
 	.swiper-contain{
 		/* margin-top: 60px; */
 		width: 100%;
-		height: 28%;
+		height: 350rpx;
 		/* padding-top: 10px; */
 		background-color: white;
 	}

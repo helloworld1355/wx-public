@@ -306,7 +306,7 @@
 		flex-direction: column;
 		/* justify-content: center; */
 		/* align-items: center;  */
-		height: 100vh;  
+		height: calc(100vh-50px);
 		position: relative;
 		background: whitesmoke;
 	}
@@ -331,14 +331,14 @@
 	} */
 	
 	.scroll-contain{
-		height: 100%;
+		height: 28%;
 		width: 100%;
 		/* margin-top: 60px; */
 	}
 	.swiper-contain{
 		/* margin-top: 60px; */
 		width: 100%;
-		height: 28%;
+		height: 350rpx;
 		/* padding-top: 10px; */
 		background-color: white;
 	}
