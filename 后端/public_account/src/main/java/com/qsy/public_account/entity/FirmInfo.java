@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Date;
+
 import lombok.Data;
 
 /**
@@ -68,10 +70,10 @@ public class FirmInfo implements Serializable {
     private String firmStatusTransfer;
 
 //    @ApiModelProperty("@desc  暂不使用；创建字段时间")
-    private LocalDate createTime;
+    private Date createTime;
 
 //    @ApiModelProperty("@desc  暂不使用；最后修改字段时间")
-    private LocalDate modifyTime;
+    private Date modifyTime;
 
 
     @Override
