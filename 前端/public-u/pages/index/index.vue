@@ -106,19 +106,51 @@
 						
 						
 					</view>
-			
 						<button class="select-search">查询</button>
-				
-					
 				</view>
-				
 				
 			</view>
 			
-			<view class="scroll-firms" v-if="firms != '' || firms != undefined ">
-				<view v-for="item in firms" class="firms" :key="firms.id" @click="firmClick(item.id)">
+			<!-- 公司列表 -->
+			<view class="scroll-firms" v-if="firmsData != '' || firmsData != undefined ">
+				<view v-for="item in firmsData" class="firms" :key="item.id" @click="firmClick(item.id)">
+					<!-- 头部公司名称 -->
 					<view class="firms-item">
-						{{item.name}}
+						<view class="firms-item-top-left">公司转让</view>
+						<view class="firms-item-top-right">{{ item.firmName }}</view>
+					</view>
+					
+					<!-- 中部，公司大致信息 -->
+					<view class="firms-item">
+						<view class="firms-item-mid">
+							<view class="firms-item-mid-item">
+								所在地
+								<view class="firms-item-mid-item-child">{{item.firmLocation}}</view>
+							</view>
+							<view class="firms-item-mid-item">
+								成立时间
+								<view class="firms-item-mid-item-child">{{ item.firmEstablishDate }}</view>
+							</view>
+							<view class="firms-item-mid-item">
+								行业类型
+								<view class="firms-item-mid-item-child">{{ item.firmSectorType }}</view>
+							</view>
+							<view class="firms-item-mid-item">
+								纳税性质
+								<view class="firms-item-mid-item-child">{{ item.firmTaxableType }}</view>
+							</view>
+						</view>
+					</view>
+					
+					<!-- 底部售价，发布等信息 -->
+					<view class="firms-item firms-item-bottom">
+						<view>
+							售价：{{ item.firmPriceTransfer }} 元
+						</view>
+						
+						<view>
+							发布时间：{{ item.firmPriceTransfer }}
+						</view>
 					</view>
 				</view>
 			</view>
@@ -131,7 +163,7 @@
 </template>
 
 <script>
-
+	import config from '@/config/config.js';
 	export default {
 		data() {
 			return {
@@ -145,6 +177,11 @@
 				areaData_index: 0,
 				firms: [],
 				images:[],
+				
+				// 发布时间
+				showTime:[],
+				// 公司数据
+				firmsData:[]
 			}
 		},
 		onReady(){
@@ -156,11 +193,11 @@
 			
 		},
 		onLoad() {
-			this.init();
-			this.setctorInit();
-			this.taxableInit();
-			this.firmsInit();
-			this.areaInit();
+			// this.init();
+			// this.setctorInit();
+			// this.taxableInit();
+			// this.firmsInit();
+			// this.areaInit();
 		},
 		methods: {
 			init:function(){
@@ -204,52 +241,38 @@
 			
 			// 公司列表初始化
 			firmsInit:function(){
-				this.firms = [{
-						id:1,
-						name:'test1'
+				 let that = this;
+				uni.request({
+					url:config.domain + 'firmInfoList',
+					header: {  
+						'Content-Type': 'application/x-www-form-urlencoded'  
+					}, 
+					data:{
+						page: 1,
+						size: 8
 					},
-					{
-						id:2,
-						name:'test2'
-					},
-					{
-						id:3,
-						name:'test3'
-					},
-					{
-						id:5,
-						name:'test4'
-					},
-					{
-						id:6,
-						name:'test5'
-					},
-					{
-						id:7,
-						name:'test6'
-					},
-					{
-						id:8,
-						name:'test7'
-					},
-					{
-						id:9,
-						name:'test8'
-					},
-					{
-						id:10,
-						name:'test9'
-					},
-					{
-						id:11,
-						name:'test10'
-					},
-					{
-						id:12,
-						name:'test11'
-					},]
-				
-				
+					method:'POST',
+					success(res) {
+						
+						/* 
+						 TODO : 暂时得到小时的时间，待转换为天
+						 */
+						
+						const options = { hour12: false, hour: 'numeric', minute: 'numeric', second: 'numeric' };
+						const nowTime = new Date() ;
+						console.log("now "+nowTime);
+						for(var i = 0; i < res.data.length; i++){
+							that.firmsData.push(res.data[i]);
+							
+							console.log("res = ",new Date(res.data[i].createTime));
+							var temp = nowTime - new Date(res.data[i].createTime);
+							temp =Math.round( temp / 3600000);
+							
+							that.showTime.push(temp);
+						}
+						console.log("showtime: ",that.showTime);
+					}
+				})
 			},
 			
 			// 区域初始化
@@ -290,6 +313,18 @@
 			pickerClick_taxable:function(e){
 				console.log("选择：",this.taxableData[e.detail.value]);
 				this.taxableData_index = e.detail.value;
+			},
+			
+			formatTime:function(value) {
+				
+				const date = new Date(value);
+				const year = date.getFullYear();
+				const month = String(date.getMonth() + 1).padStart(2, '0');
+				const day = String(date.getDate()).padStart(2, '0');
+				const hours = String(date.getHours()).padStart(2, '0');
+				const minutes = String(date.getMinutes()).padStart(2, '0');
+				const seconds = String(date.getSeconds()).padStart(2, '0');
+				return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 			}
 		}
 	}
@@ -453,17 +488,78 @@
 		background: whitesmoke;
 	}
 	.firms{
-		background: white;
+		background: whitesmoke;
 		width: 100%;
 		margin: 5px 20px;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		font-size: 10px;
+		
 	}
 	.firms-item{
-		margin: 5px 10%;
-		padding: 5px 10%;
-		background-color: slategray;
-		width: 60%;
-		border-radius: 5px;
+		display: flex;
+		flex-direction: row;
+		background-color: white;
+		width: 95%;
 	}
+	.firms-item-top-left{
+		margin-top: 7px;
+		padding: 2px 5px;
+		/* border: 2px solid red; */
+		border-radius: 10px 0 10px 0;
+		/* font-size: 11px; */
+		background-color: #ff9300; 
+		color: white;
+	}
+	.firms-item-top-right{
+		margin-top: 7px;
+		margin-left: 10px;
+		padding: 2px;
+		/* border: 2px solid red;
+		border-radius: 10px 0 10px 0; */
+		/* font-size: 11px; */
+		background-color: white;
+		max-width: 50%;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	.firms-item-mid{
+		width: 100%;
+		margin-top: 7px;/* 
+		margin-left: 10px; */
+		display: flex;
+		/* flex-direction: row; */
+		/* border: 2px solid red; */
+		border-radius: 10px ;
+		justify-content: space-evenly;
+		text-align: center;
+		background-color: #e2e2e2;
+	}
+	.firms-item-mid-item{
+		margin: 10px 0;
+		display: flex;
+		flex-direction: column;
+		width: 22%;
+		/* padding: 5px 0; */
+		/* font-size: 12px; */
+		/* background-color: beige; */
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+	.firms-item-mid-item-child{
+		margin-top: 10px;
+	}
+	
+	.firms-item-bottom{
+		 display: flex;
+		 flex-direction: row;
+		 justify-content: space-between;
+		 padding: 5px 0;
+	}	
+	
 	.scroll-firms-none{
 		align-items: center;
 		margin-top: 10px;

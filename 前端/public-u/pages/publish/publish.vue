@@ -65,8 +65,7 @@
 			<view class="line" style="margin-right: 5px;">
 				<view class="picker"> 选择时间：</view>
 				<picker class="picker" mode="date" start="2000-1-1" end="2025-1-1" @change="dateChange"  >
-					<view v-if="uploadData.firmEstablishDate != ''" style="border: 2px solid black;" class="uni-input" >{{uploadData.firmEstablishDate}}</view>
-					<view v-else class="select-picker-input">全部</view>
+					<view style="border: 2px solid black;" class="uni-input" >{{uploadData.firmEstablishDate}}</view>
 				</picker>
 			</view>
 			
@@ -257,43 +256,33 @@
 			// 发布按钮
 			publishClick:function(){
 				let that = this;
-				// uni.showLoading({
-				// 	title:'请等待',
-				// 	mask:true,
-					
-				// })
-				
-				// uni.showModal({
-				// 	content:'已进入审核，请等待审核通过！',
-				// 	success() {
-				// 		uni.hideLoading();
-				// 	}
-				// })
-				
+				uni.showLoading({
+					title:'请等待',
+					mask:true,
+				})
 				console.log("upload: ",this.uploadData);
-				
 				uni.request({
-					url:'http://localhost:8080/upload',
+					url:'http://localhost:8080/upload/addFirmInfo',
 					method:'POST',
 					data:that.uploadData,
-					/*
-					{
-						firmName:that.uploadData.firmName,
-						firmSectorType: that.uploadData.firmSectorType,
-						firmLocation: that.uploadData.firmLocation,
-						firmLocationDetail: that.uploadData.firmLocationDetail,
-						firmTaxableType: that.uploadData.firmTaxableType,
-						firmEstablishDate: that.uploadData.firmEstablishDate,
-						firmBusinessScope: that.uploadData.firmBusinessScope,
-						firmTaxBelong: that.uploadData.firmTaxBelong,
-						firmContacts: that.uploadData.firmContacts,
-						firmContactsPhone: that.uploadData.firmContactsPhone,
-						firmPriceTransfer: that.uploadData.firmPriceTransfer,
-						upload_regist_capital: that.uploadData.upload_regist_capital
-					},*/
 					dataType:'application/json',
 					success(res) {
-						console.log("res : ",res);
+						if(res.statusCode == 200){
+							uni.showModal({
+								content:'提交成功！',
+							})
+						}else{
+							uni.showModal({
+								content:'上传失败！',
+							})
+						}
+						
+					},fail() {
+						uni.showModal({
+							content:'上传失败！',
+						})
+					},complete() {
+						uni.hideLoading();
 					}
 				})
 				

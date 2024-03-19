@@ -135,7 +135,7 @@
 								
 								<view style="height: 20px;"></view>
 								<h1>3、转让价格</h1>
-								<p>单位（万）：30</p>
+								<p>单位（元）：3000</p>
 							</view>
 							<!-- 2、联系 -->
 							<view class="detail-link">
