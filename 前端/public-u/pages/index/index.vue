@@ -26,8 +26,10 @@
 			<!-- 顶部图片轮播 -->
 			<view class="swiper-contain">
 				<swiper class="swiper" indicator-dots="true" autoplay="true" interval="3000">
-					<swiper-item v-for="item in images" :key="item.id"  >
-						<image :src="item.src" mode="scaleToFill"></image>
+					<swiper-item v-for="item in imageList" :key="index"  >
+						<uni-link :href="item.web">
+							<image :src="item.src" mode="scaleToFill"></image>
+						</uni-link>
 					</swiper-item>
 				</swiper>
 			</view>
@@ -48,7 +50,8 @@
 							<view v-else class="select-picker-input">全部</view>
 						</picker>
 					</view>
-					<image style="width: 20px;height: 20px;" @click="clearBtn" src="../../static/image/叉.png"></image>
+					<image style="width: 20px;height: 20px;" @click="clearBtn" src="../../static/image/叉.png">
+					</image>
 				</view>
 				
 				
@@ -112,8 +115,8 @@
 			</view>
 			
 			<!-- 公司列表 -->
-			<view class="scroll-firms" v-if="firmsData != '' || firmsData != undefined ">
-				<view v-for="item in firmsData" class="firms" :key="item.id" @click="firmClick(item.id)">
+			<view class="scroll-firms" v-if="firmsData != '' && firmsData != undefined ">
+				<view v-for="(item, index) in firmsData" class="firms" :key="item.id" @click="firmClick(item.id)">
 					<!-- 头部公司名称 -->
 					<view class="firms-item">
 						<view class="firms-item-top-left">公司转让</view>
@@ -149,7 +152,7 @@
 						</view>
 						
 						<view>
-							发布时间：{{ item.firmPriceTransfer }}
+							发布时间：{{ showTime[index] }} 前
 						</view>
 					</view>
 				</view>
@@ -176,7 +179,17 @@
 				taxableData_index: 0,
 				areaData_index: 0,
 				firms: [],
-				images:[],
+				
+				imageList:[],
+				
+				
+				// 区域 TODO：首页区域选择需要到县
+				area_display:'',
+				provinces: [],
+				cities: [],
+				districts: [],
+				multiArrary:[[], [], []],
+				multiIndex: [0,0,0],
 				
 				// 发布时间
 				showTime:[],
@@ -184,62 +197,83 @@
 				firmsData:[]
 			}
 		},
+		
+		
 		onReady(){
 			this.init();
-			this.setctorInit();
-			this.taxableInit();
-			this.firmsInit();
-			this.areaInit();
+			uni.setNavigationBarTitle({
+				title: '惠企转'
+			});
 			
 		},
 		onLoad() {
-			// this.init();
-			// this.setctorInit();
-			// this.taxableInit();
-			// this.firmsInit();
-			// this.areaInit();
+			
 		},
 		methods: {
 			init:function(){
-				this.images = [
-					{
-						id: 1,
-						src:'../../static/image/4.png'
-					},
-					{
-						id: 2,
-						src:'../../static/image/4.png'
-					},
-					{
-						id: 3,
-						src:'../../static/image/4.png'
-					},
-					{
-						id: 4,
-						src:'../../static/image/4.png'
+				this.opentionInit();
+				this.firmsInit();
+				this.areaInit();
+			},
+			
+			
+			// 行业、纳税性质选项初始化
+			opentionInit:function(){
+				let that = this;
+				// 测试用
+				
+				// 正式用
+				uni.request({
+					url:config.domain + 'configList',
+					method:'POST',
+					header:{
+						'Content-Type': 'application/x-www-form-urlencoded'  
+					}, 
+				
+					success(res) {
+						console.log("success: " ,res.data.data);
+						console.log("分类",res.data.data.sectors.split(','));
+						const sectorList = res.data.data.sectors.split(',');
+						const taxableList = res.data.data.taxables.split(',');
+						
+						var imageTemp = res.data.data.imgSrc.split(';;');
+						// 存入行业
+						for(var i=0; i<sectorList.length; i++){
+							that.sectorsData.push(sectorList[i]);
+						}
+						// 存入纳税性质
+						for(var i=0; i<taxableList.length; i++){
+							that.taxableData.push(taxableList[i]);
+						}
+						var imagelist =[];
+						// 存入首页图片
+						for(var i=0; i<imageTemp.length - 1; i++){
+							var temp = imageTemp[i].split(',,');
+							let src = temp[0];
+							let web = temp[1];
+							var item = {
+								src : src,
+								web : web
+							}
+							if(item == '')
+							 break;
+							that.imageList.push(item);
+						}
+						// console.log("imageList:",that.imageList);
+						
 					}
-				]
+				})
 			},
 			
-			
-			// 行业初始化
-			setctorInit:function(){
-				// 测试用
-				this.sectorsData = ['全部','科技','法律','美容'];
+			// 区域初始化
+			areaInit:function(){
 				
-				// 正式用
+				this.areaData = ['全部','廊坊','北京','天津'];
 				
 			},
-			
-			// 纳税性质初始化
-			taxableInit:function(){
-				// 测试用
-				this.taxableData = ['全部','所得税','消费税','增值税'];
-				
-				// 正式用
-			},
-			
-			// 公司列表初始化
+			/*
+			 * @desc 从服务器获取公司数据，并处理数据。
+			 */
 			firmsInit:function(){
 				 let that = this;
 				uni.request({
@@ -254,10 +288,6 @@
 					method:'POST',
 					success(res) {
 						
-						/* 
-						 TODO : 暂时得到小时的时间，待转换为天
-						 */
-						
 						const options = { hour12: false, hour: 'numeric', minute: 'numeric', second: 'numeric' };
 						const nowTime = new Date() ;
 						console.log("now "+nowTime);
@@ -267,18 +297,20 @@
 							console.log("res = ",new Date(res.data[i].createTime));
 							var temp = nowTime - new Date(res.data[i].createTime);
 							temp =Math.round( temp / 3600000);
+							var hour = ~~(temp / 24);
+							var publish = '';
+							if(hour == 0){
+								publish = temp + "小时";
+							}else{
+								temp = temp % 24;
+								publish = hour + "天" + temp + "小时";
+							}
 							
-							that.showTime.push(temp);
+							that.showTime.push(publish);
 						}
 						console.log("showtime: ",that.showTime);
 					}
 				})
-			},
-			
-			// 区域初始化
-			areaInit:function(){
-				this.areaData = ['全部','廊坊','北京','天津'];
-				
 			},
 			
 			 bindPickerChange: function(e) {
@@ -287,6 +319,7 @@
 				this.index = e.detail.value
 			},
 			
+			// 点击进入详情
 			firmClick:function(index){
 				uni.navigateTo({
 					url:'/pages/index/detail?id='+index
@@ -315,6 +348,9 @@
 				this.taxableData_index = e.detail.value;
 			},
 			
+			
+			
+			// 时间格式化函数
 			formatTime:function(value) {
 				
 				const date = new Date(value);
@@ -344,6 +380,7 @@
 		height: calc(100vh-50px);
 		position: relative;
 		background: whitesmoke;
+		
 	}
 	/* 搜索框要固定顶部时使用 */
 	/* .top-contain{
@@ -397,7 +434,7 @@
 		flex-wrap: wrap; 
 		justify-content: center;
 		background-color: white;
-		font-size: 35rpx;
+		font-size: 28rpx;
 	}
 	.select-shore{
 		/* align-items: center; */
@@ -452,7 +489,7 @@
 		background-color: whitesmoke;
 	}
 	.select-picker-text{
-		font-size: 35rpx;
+		/* font-size: 35rpx; */
 		
 	}
 	.select-picker-db{
@@ -464,7 +501,7 @@
 		height: 50rpx;
 		padding: 8rpx 25rpx;
 		line-height:50rpx;
-		font-size:35rpx;
+		/* font-size:35rpx; */
 	}
 	.select-search{
 		/* flex: 1; */
@@ -473,7 +510,7 @@
 		/* margin: 5px 0px 0px 0px; */
 		padding-top: 0;
 		padding-bottom: 0;
-			font-size: 35rpx;
+		font-size: 28rpx;
 			/* width: 20%; */
 			
 		/* margin: 8rpx 0; */
@@ -494,7 +531,7 @@
 		display: flex;
 		flex-direction: column;
 		align-items: center;
-		font-size: 10px;
+		font-size: 24rpx;
 		
 	}
 	.firms-item{

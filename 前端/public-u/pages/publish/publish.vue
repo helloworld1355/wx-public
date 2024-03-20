@@ -1,111 +1,199 @@
 <template>
 	<view class="content">
 		<scroll-view class="scroll-contain" scroll-y="true">
-			<!-- 公司名 -->
-			<view class="line" style="display: flex;">
-				<view class="picker">公司名称：</view>
-				<input style="border: 2px solid black;" class="uni-input" v-model="uploadData.firmName" type="nickname" placeholder="输入框" />
-				<!-- <view class="number-input" style="padding: 20px 0;">(万元)</view> -->
-			</view>
 			
-			
-			<!-- 行业选择 -->
-			<view class="line">
-				<view class="picker">行业：</view>
-				<picker  class="picker" mode="selector" :range="sectorsData" :value="sectorsIndex" @change="sectorsChange" >
-					<view style="border: 2px solid black;">{{ sectorsData[sectorsIndex] }}</view>
-				</picker>
+			<view class="row">
+				<view class="title">
+					<view class="scripe"></view>
+					公司基本信息
+				</view>
 				
-			</view>
-			
-			<!-- 地区选择器 -->
-			<view class="line" style="flex-direction: column;">
-				<view style="display: flex;flex-direction: row;">
-					<view class="picker">注册地址：</view>
-					<picker class="picker" mode="multiSelector"  @columnchange="pickerColumnChange" @change="pickerChange" :value="multiIndex" :range="multiArrary">
-						<view class="uni-input" style="border: 2px solid black;">{{ uploadData.firmLocation }}</view>
+				<!-- 公司名 -->
+				<view class="line" style="display: flex;">
+					<view class="line-text" >
+						公司名称 
+						<view >&nbsp*</view>
+						：
+					</view>
+					<view class="uni-input" style="display: flex;">
+						<input class="uni-input-item"  v-model="uploadData.firmName" type="nickname" placeholder="请输入公司名称" />
+						<!-- <text class="uni-icon" v-if="uploadData.firmPriceTransfer" @click="clearIcon">&#xe434;</text> -->
+						<image src="../../static/image/x.png" class="uni-icon" v-if="uploadData.firmName" @click="clearIcon('firmName')"></image>
+					</view>
+				</view>
+				
+				
+				<!-- 行业选择 -->
+				<view class="line">
+					<view class="line-text">行业
+						<view >
+							&nbsp*
+						</view>：
+					</view>
+					<picker class="uni-input" mode="selector" :range="sectorsData" :value="sectorsIndex" @change="sectorsChange" >
+						<view >{{ sectorsData[sectorsIndex] }}</view>
 					</picker>
 				</view>
-				<!-- 详细地址 -->
-				<view style="padding:  10px 0;display: flex;flex-direction: row;">
-					<view>详细地址：</view>
-					<input style="border: 2px solid black;" class="uni-input" v-model="uploadData.firmLocationDetail" placeholder="带清除按钮的输入框" @input="clearInput" />
-					<text class="uni-icon" v-if="showClearIcon" @click="clearIcon">&#xe434;</text>
-				</view>
-			</view>
-			
-			
-			
-			
-			<!-- 注册资本 -->
-			<view class="line" style="display: flex;">
-				<view >注册资本：</view>
-				<input style="border: 2px solid black;" class="number-input" type="digit" v-model="uploadData.upload_regist_capital" placeholder="这是一个数字输入框" />
-				<view class="number-input" style="padding: 20px 0;">(万元)</view>
-			</view>
-			
-			<!-- 营业范围 -->
-			<view class="line" style="flex-direction: column;">
-				<view style="padding:  10px 0;display: flex;flex-direction: row;">
-					<view>营业范围：</view>
-					<input style="border: 2px solid black;" class="uni-input" placeholder="带清除按钮的输入框" v-model="uploadData.firmBusinessScope" @input="clearInput" />
-					<text class="uni-icon" v-if="showClearIcon" @click="clearIcon">&#xe434;</text>
-				</view>
-			</view>
-			
-			
-			<!-- 纳税性质 -->
-			<view class="line">
-				<view class="picker">纳税性质：</view>
-				<picker  class="picker" mode="selector" :range="taxableData" :value="taxableIndex" @change="taxableChange" >
-					<view style="border: 2px solid black;">{{ taxableData[taxableIndex] }}</view>
-				</picker>
-			</view>
-			
-			<view class="line" style="margin-right: 5px;">
-				<view class="picker"> 选择时间：</view>
-				<picker class="picker" mode="date" start="2000-1-1" end="2025-1-1" @change="dateChange"  >
-					<view style="border: 2px solid black;" class="uni-input" >{{uploadData.firmEstablishDate}}</view>
-				</picker>
-			</view>
-			
-			<!-- 归属税局 -->
-			<view class="line" style="flex-direction: column;">
-				<view style="padding:  10px 0;display: flex;flex-direction: row;">
-					<view>归属税局：</view>
-					<input style="border: 2px solid black;" class="uni-input" placeholder="带清除按钮的输入框" v-model="uploadData.firmTaxBelong" @input="clearInput" />
-					<text class="uni-icon" v-if="showClearIcon" @click="clearIcon">&#xe434;</text>
-				</view>
-			</view>
-			
-			<!-- 联系人 -->
-			<view class="line" style="flex-direction: column;">
-				<view style="padding:  10px 0;display: flex;flex-direction: row;">
-					<view>姓名：</view>
-					<input style="border: 2px solid black;" class="uni-input" placeholder="带清除按钮的输入框" v-model="uploadData.firmContacts" @input="clearInput" />
-					<text class="uni-icon" v-if="showClearIcon" @click="clearIcon">&#xe434;</text>
+				
+				
+				<!-- 地区选择器 -->
+				<view class="line">
+					<view class="line-text">
+						注册地址
+						<view >&nbsp*</view>
+						：
+					</view>
+					<picker class="uni-input" mode="multiSelector"  @columnchange="pickerColumnChange" @change="pickerChange" :value="multiIndex" :range="multiArrary">
+						<view  >{{ uploadData.firmLocation }}</view>
+					</picker>
+				</view>	
+				
+				<!-- 详细地址选择 -->
+				<view class="line">
+					<view class="line-text">
+						详细地址
+						<view >&nbsp*</view>
+						：
+					</view>
+					<view class="uni-input" style="display: flex;">
+						<input class="uni-input-item" v-model="uploadData.firmLocationDetail" placeholder="请输入公司所在详细地址" @input="clearInput" />
+						<!-- <text class="uni-icon" v-if="uploadData.firmPriceTransfer" @click="clearIcon">&#xe434;</text> -->
+						<image src="../../static/image/x.png" class="uni-icon" v-if="uploadData.firmLocationDetail" @click="clearIcon('firmLocationDetail')"></image>
+					</view>
+					
 				</view>
 				
-				<view style="padding:  10px 0;display: flex;flex-direction: row;">
-					<view>电话：</view>
-					<input style="border: 2px solid black;" class="uni-input" placeholder="带清除按钮的输入框" v-model="uploadData.firmContactsPhone" @input="clearInput" />
-					<text class="uni-icon" v-if="showClearIcon" @click="clearIcon">&#xe434;</text>
+				
+				<!-- 注册资本 -->
+				<view class="line" style="display: flex;">
+					<view class="line-text">
+						注册资本(万元)
+						<view >&nbsp*</view>
+						：
+					</view>
+					<view class="uni-input" style="display: flex;">
+						<input class="uni-input-item" type="digit" v-model="uploadData.firmRegistCapital" placeholder="请输入公司注册资本" />
+						<!-- <text class="uni-icon" v-if="uploadData.firmPriceTransfer" @click="clearIcon">&#xe434;</text> -->
+						<image src="../../static/image/x.png" class="uni-icon" v-if="uploadData.firmRegistCapital" @click="clearIcon('firmRegistCapital')"></image>
+					</view>
+					
 				</view>
+				
+				<!-- 营业范围 -->
+				<view class="line" >
+					<view class="line-text">
+						营业范围
+						<view >&nbsp*</view>
+						：
+					</view>
+					<view class="uni-input" style="display: flex;">
+						<input class="uni-input-item" placeholder="请输入公司营业范围" v-model="uploadData.firmBusinessScope" @input="clearInput" />
+						<!-- <text class="uni-icon" v-if="uploadData.firmPriceTransfer" @click="clearIcon">&#xe434;</text> -->
+						<image src="../../static/image/x.png" class="uni-icon" v-if="uploadData.firmBusinessScope" @click="clearIcon('firmBusinessScope')"></image>
+					</view>
+				
+				</view>
+				
+				
+				<!-- 纳税性质 -->
+				<view class="line">
+					<view class="line-text">
+						纳税性质
+						<view >&nbsp*</view>
+						：
+					</view>
+					<picker  class="uni-input" mode="selector" :range="taxableData" :value="taxableIndex" @change="taxableChange" >
+						<view >{{ taxableData[taxableIndex] }}</view>
+					</picker>
+				</view>
+				
+				<!-- 注册时间 -->
+				<view class="line" >
+					<view class="line-text"> 
+						注册时间
+						<view >&nbsp*</view>
+						：
+					</view>
+					<picker class="uni-input" mode="date" start="2000-1-1" end="2025-1-1" @change="dateChange"  >
+						<view >{{uploadData.firmEstablishDate}}</view>
+					</picker>
+				</view>
+				
+				<!-- 归属税局 -->
+				<view class="line" >
+					<view class="line-text">
+						归属税局：
+						<view >&nbsp*</view>
+						：
+					</view>
+					<view class="uni-input" style="display: flex;">
+						<input class="uni-input-item" placeholder="请输入公司所属税务局" v-model="uploadData.firmTaxBelong" @input="clearInput" />
+						<!-- <text class="uni-icon" v-if="uploadData.firmPriceTransfer" @click="clearIcon">&#xe434;</text> -->
+						<image src="../../static/image/x.png" class="uni-icon" v-if="uploadData.firmTaxBelong" @click="clearIcon('firmTaxBelong')"></image>
+					</view>
+					
+				</view>
+				
 			</view>
 			
-			<!-- 转让价格 -->
-			<view class="line" style="display: flex;">
-				<view >转让价格：</view>
-				<input style="border: 2px solid black;" class="number-input" type="digit" v-model="uploadData.firmPriceTransfer" placeholder="这是一个数字输入框" />
-				<view class="number-input" style="padding: 20px 0;">(万元)</view>
+			<view class="row" style="margin-top: 10px;">
+				<view class="title">
+					<view class="scripe"></view>
+					联系人信息
+				</view>
+				<!-- 联系人 -->
+				<view class="line" >
+					<view class="line-text">
+						姓名
+						<view >&nbsp*</view>
+						：
+					</view>
+					<view class="uni-input" style="display: flex;">
+						<input class="uni-input-item" placeholder="请输入联系人姓名" v-model="uploadData.firmContacts" @input="clearInput" />
+						<!-- <text class="uni-icon" v-if="uploadData.firmPriceTransfer" @click="clearIcon">&#xe434;</text> -->
+						<image src="../../static/image/x.png" class="uni-icon" v-if="uploadData.firmContacts" @click="clearIcon('firmContacts')"></image>
+					</view>
+					
+				</view>	
+					
+				<!-- 联系人电话 -->
+				<view class="line" >
+					<view class="line-text">电话
+						<view >&nbsp*</view>
+						：
+					</view>
+					<view class="uni-input" style="display: flex;">
+						<input class="uni-input-item" placeholder="请输入联系人电话" v-model="uploadData.firmContactsPhone" @input="clearInput" />
+						<!-- <text class="uni-icon" v-if="uploadData.firmPriceTransfer" @click="clearIcon">&#xe434;</text> -->
+						<image src="../../static/image/x.png" class="uni-icon" v-if="uploadData.firmContactsPhone" @click="clearIcon('firmContactsPhone')"></image>
+					</view>
+					
+				
+				</view>
+				
+				<!-- 转让价格 -->
+				<view class="line" >
+					<view class="line-text">
+						转让价格(元)
+						<view >&nbsp*</view>
+						：
+					</view>
+					<view class="uni-input" style="display: flex;">
+						<input class="uni-input-item" type="digit" v-model="uploadData.firmPriceTransfer" placeholder="请输入转让价格(元)" />
+						<!-- <text class="uni-icon" v-if="uploadData.firmPriceTransfer" @click="clearIcon">&#xe434;</text> -->
+						<image src="../../static/image/x.png" class="uni-icon" v-if="uploadData.firmPriceTransfer" @click="clearIcon('firmPriceTransfer')"></image>
+					</view>
+					
+				</view>
+				
 			</view>
+			
 			
 			<!-- 发布按钮 -->
 			<view class="bottom">
 				<button class="bottom-btn" @click="publishClick">
 					我要发布
 				</button>
-				
 			</view>
 			
 		
@@ -114,6 +202,7 @@
 </template>
 
 <script>
+	import config from "@/config/config.js"
 	export default {
 		data() {
 			return {
@@ -137,6 +226,8 @@
 				// 日期
 				dateIndex:0,
 				
+				
+				
 				// 数据
 				uploadData:{
 					firmName:'',
@@ -150,13 +241,17 @@
 					firmContacts:'',
 					firmContactsPhone:'',
 					firmPriceTransfer:'',
-					upload_regist_capital:''
+					firmRegistCapital:''
 				}
 			}
 		},
 		
 		onLoad() {
 			let that = this;
+			console.log("config :",config);
+			uni.setNavigationBarTitle({
+				title: '我要发布'
+			});
 			
 			// 获取区域数据
 			// h5请求本地json格式数据
@@ -253,6 +348,17 @@
 				that.uploadData.firmEstablishDate = e.detail.value;
 			},
 			
+			
+			// 清除输入框按键
+			clearIcon:function(test){
+				if(this.uploadData.hasOwnProperty(test)){
+					console.log("存在",this.uploadData[test]);
+					this.uploadData[test] = '';
+				}else {
+					console.log("不存在");
+				}
+			},
+			
 			// 发布按钮
 			publishClick:function(){
 				let that = this;
@@ -262,7 +368,7 @@
 				})
 				console.log("upload: ",this.uploadData);
 				uni.request({
-					url:'http://localhost:8080/upload/addFirmInfo',
+					url:config.upload + 'addFirmInfo',
 					method:'POST',
 					data:that.uploadData,
 					dataType:'application/json',
@@ -309,22 +415,77 @@
 		/* margin-top: 60px; */
 		height: 100%;
 		width: 100%;
+		font-size: 15px;
+		background-color: whitesmoke;
 	}
-	.line{
-		margin: 5px 0;
-		background-color: #97b69a;
+	.row{
+		display: flex;
+		flex-direction: column;
+		background-color: white;
+		padding-bottom: 10px;
+	}
+	.title{
+		font-size: 30rpx;
+		padding: 5px 10px;
+		width: 100%;
+		height: 20px;
+		background-color: #d4d9ec;
 		display: flex;
 		align-items: center;
-		justify-content: center;
+		flex-direction: row;
 	}
-	.picker{
-		padding: 20px 0;
-		text-align: center;
-		/* height: 50px; */
+	.scripe{
+		background-color: aqua;
+		width: 5px;
+		height: 80%;
+		border-radius: 2px;
+		margin-right: 10px;
 	}
-	.number-input{
+	.line{
+		/* margin: 5px 0; */
+		/* background-color: white; */
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+		margin-top: 10px;
+		/* 不换行，自动以。。。代替 */
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		
+		
+		
+	}
+	.line-text{
+		width: 30%;
+		margin-left: 10px;
+		font-size: 26rpx;
+		display: flex;
+	}
+	.line-text view{
+		color: red;
+	}
+	.uni-input{
 		/* padding: 0px 0px; */
 		height: auto;
+		margin-right: 20px;
+		flex-grow: 1;
+		border-radius: 5px;
+		border: 2rpx solid black;
+		padding: 5rpx 0;
+		padding-left: 10px;
+		height: 60rpx;
+		line-height: 60rpx;
+		/* justify-items: center; */
+		align-items: center;
+		/* text-align: center; */
+	}
+	.uni-input-item{
+		width: calc(100% - 50rpx);
+	}
+	.uni-icon{
+		height: 80%;
+		width: 50rpx;
 	}
 	
 	.bottom{

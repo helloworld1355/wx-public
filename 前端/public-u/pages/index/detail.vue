@@ -26,8 +26,10 @@
 			<!-- 顶部图片轮播 -->
 			<view class="swiper-contain">
 				<swiper class="swiper" indicator-dots="true" autoplay="true" interval="3000">
-					<swiper-item v-for="item in images" :key="item.id"  >
-						<image :src="item.src" mode="scaleToFill"></image>
+					<swiper-item v-for="item in imageList" :key="item.id"  >
+						<uni-link :href="item.web">
+							<image :src="item.src" mode="scaleToFill"></image>
+						</uni-link>
 					</swiper-item>
 				</swiper>
 			</view>
@@ -108,49 +110,140 @@
 					</view>
 			
 						<button class="select-search">查询</button>
-				
-					
 				</view>
 				
 				
 			</view>
 			
 			<!-- 公司详情 -->
-						<view class="scroll-firms-detail">
-							<!-- 1、基本信息 -->
-							<view class="detail-base">
-								<h1>1、基本信息</h1>
-								<p>行业：科技</p>
-								<p>注册资本（万）：300</p>
-								<p>成立时间：2021：12：02</p>
-								<p>详细地址：北华航天工业学院\n</p>
-								<p>营业范围：it</p>
-								<p>纳税性质：小规模纳税</p>
-								<p>归属税局：测试税务局</p>
-								<view style="height: 20px;"></view>
-								
-								<h1>2、联系人</h1>
-								<p>姓名：测试</p>
-								<p>电话：123456789</p>
-								
-								<view style="height: 20px;"></view>
-								<h1>3、转让价格</h1>
-								<p>单位（元）：3000</p>
-							</view>
-							<!-- 2、联系 -->
-							<view class="detail-link">
-							</view>
-							<!-- 3、转让价格 -->
-							<view class="detail-transfer">
-							</view>
-						</view>
+			<view class="row" >
+				<view class="title">
+					<view class="scripe"></view>
+					公司基本信息
+				</view>
+				
+				<!-- 公司名称 -->
+				<view class="line" style="display: flex;">
+					<view class="line-text" >
+						公司名称：
+					</view>
+					<view class="uni-input" >{{ firmData.firmName }}</view>
+				</view>
+				
+			<!-- 行业选择 -->
+				<view class="line">
+					<view class="line-text">行业：
+					</view>
+					
+					<view class="uni-input" >{{ firmData.firmSectorType }}</view>
+				
+				</view>
+				
+				
+				<!-- 地区选择器 -->
+				<view class="line">
+					<view class="line-text">
+						注册地址：
+					</view>
+					<view class="uni-input" >{{ firmData.firmLocation }}</view>
+					
+				</view>	
+				
+				<!-- 详细地址选择 -->
+				<view class="line">
+					<view class="line-text">
+						详细地址：
+					</view>
+					<view class="uni-input" >{{ firmData.firmLocationDetail }}</view>
+					
+				</view>
+				
+				
+				<!-- 注册资本 -->
+				<view class="line" style="display: flex;">
+					<view class="line-text">
+						注册资本：
+					</view>
+					<view class="uni-input" >{{ firmData.firmRegistCapital }} (万元)</view>
+					
+				</view>
+				
+				<!-- 营业范围 -->
+				<view class="line" >
+					<view class="line-text">
+						营业范围：
+					</view>
+					<view class="uni-input" >{{ firmData.firmBusinessScope }}</view>
 			
+				</view>
+				
+				
+				<!-- 纳税性质 -->
+				<view class="line">
+					<view class="line-text">
+						纳税性质：
+					</view>
+					<view class="uni-input" >{{ firmData.firmTaxableType }}</view>
+				</view>
+				
+				<!-- 注册时间 -->
+				<view class="line" >
+					<view class="line-text"> 
+						注册时间：
+					</view>
+					<view class="uni-input" >{{ firmData.firmEstablishDate }}</view>
+					
+				</view>
+				
+				<!-- 归属税局 -->
+				<view class="line" style="margin-bottom: 10px;">
+					<view class="line-text">
+						归属税局：
+					</view>
+					<view class="uni-input" >{{ firmData.firmTaxBelong }}</view>
+				</view>
+			</view>
+			
+			<view class="row" style="margin-top: 10px;">
+				<view class="title">
+					<view class="scripe"></view>
+					联系人信息
+				</view>
+				<!-- 联系人 -->
+				<view class="line" >
+					<view class="line-text">
+						姓名：
+					</view>
+					<view class="uni-input" >{{ firmData.firmContacts }}</view>
+				
+				</view>	
+					
+				<!-- 联系人电话 -->
+				<view class="line" >
+					<view class="line-text">
+						电话：
+					</view>
+					<text class="uni-input" >{{ firmData.firmContactsPhone }}</text>				
+				</view>
+				
+				<view class="line" >
+					<view class="line-text">
+						售价：
+					</view>
+					<view class="uni-input" >{{ firmData.firmPriceTransfer }} 元</view>					
+				</view>
+				
+				<!-- 空白占位 -->
+				<view style="height: 100px;" >
+				</view>
+				
+			</view>
 		</scroll-view>
 	</view>
 </template>
 
 <script>
-
+	import config from '@/config/config.js'
 	export default {
 		data() {
 			return {
@@ -163,113 +256,97 @@
 				taxableData_index: 0,
 				areaData_index: 0,
 				firms: [],
-				images:[],
+				imageList:[],
+				firmData:''
 			}
 		},
 		onReady(){
 			this.init();
-			this.setctorInit();
-			this.taxableInit();
-			this.firmsInit();
-			this.areaInit();
+			
+			uni.setNavigationBarTitle({
+				title: '公司详情'
+			});
 			
 		},
-		onLoad() {
-			this.init();
-			this.setctorInit();
-			this.taxableInit();
-			this.firmsInit();
-			this.areaInit();
+		onLoad(option) {
+			console.log("option:",option);
+			this.firmsInit(option.id);
+			
+		
 		},
 		methods: {
 			init:function(){
-				this.images = [
-					{
-						id: 1,
-						src:'../../static/image/4.png'
+				this.opentionInit();
+				this.areaInit();
+			},
+			
+			/*
+			 * @desc 从服务器获取公司数据，并处理数据。
+			 */
+			firmsInit:function(id){
+				let that = this;
+				uni.request({
+					url:config.domain + 'firmInfoItem',
+					header: {  
+						'Content-Type': 'application/x-www-form-urlencoded'  
+					}, 
+					data:{
+						id:id
 					},
-					{
-						id: 2,
-						src:'../../static/image/4.png'
-					},
-					{
-						id: 3,
-						src:'../../static/image/4.png'
-					},
-					{
-						id: 4,
-						src:'../../static/image/4.png'
+					method:'POST',
+					success(res) {
+						console.log("get:",res);
+						that.firmData = res.data.data;
 					}
-				]
+				})
 			},
 			
-			
-			// 行业初始化
-			setctorInit:function(){
+			opentionInit:function(){
+				let that = this;
 				// 测试用
-				this.sectorsData = ['全部','科技','法律','美容'];
 				
 				// 正式用
-				
+				uni.request({
+					url:config.domain + 'configList',
+					method:'POST',
+					header:{
+						'Content-Type': 'application/x-www-form-urlencoded'  
+					}, 
+					success(res) {
+						console.log("success: " ,res.data.data);
+						console.log("分类",res.data.data.sectors.split(','));
+						const sectorList = res.data.data.sectors.split(',');
+						const taxableList = res.data.data.taxables.split(',');
+						
+						var imageTemp = res.data.data.imgSrc.split(';;');
+						// 存入行业
+						for(var i=0; i<sectorList.length; i++){
+							that.sectorsData.push(sectorList[i]);
+						}
+						// 存入纳税性质
+						for(var i=0; i<taxableList.length; i++){
+							that.taxableData.push(taxableList[i]);
+						}
+						var imagelist =[];
+						// 存入首页图片
+						for(var i=0; i<imageTemp.length - 1; i++){
+							var temp = imageTemp[i].split(',,');
+							let src = temp[0];
+							let web = temp[1];
+							var item = {
+								src : src,
+								web : web
+							}
+							if(item == '')
+							 break;
+							that.imageList.push(item);
+						}
+						// console.log("imageList:",that.imageList);
+						
+					}
+				})
 			},
 			
-			// 纳税性质初始化
-			taxableInit:function(){
-				// 测试用
-				this.taxableData = ['全部','所得税','消费税','增值税'];
-				
-				// 正式用
-			},
-			
-			// 公司列表初始化
-			firmsInit:function(){
-				this.firms = [{
-						id:1,
-						name:'test1'
-					},
-					{
-						id:2,
-						name:'test2'
-					},
-					{
-						id:3,
-						name:'test3'
-					},
-					{
-						id:5,
-						name:'test4'
-					},
-					{
-						id:6,
-						name:'test5'
-					},
-					{
-						id:7,
-						name:'test6'
-					},
-					{
-						id:8,
-						name:'test7'
-					},
-					{
-						id:9,
-						name:'test8'
-					},
-					{
-						id:10,
-						name:'test9'
-					},
-					{
-						id:11,
-						name:'test10'
-					},
-					{
-						id:12,
-						name:'test11'
-					},]
-				
-				
-			},
 			
 			// 区域初始化
 			areaInit:function(){
@@ -314,10 +391,7 @@
 	}
 </script>
 
-<script>
-	
-	
-</script>
+
 <style>
 	
 	.content{
@@ -325,7 +399,7 @@
 		flex-direction: column;
 		/* justify-content: center; */
 		/* align-items: center;  */
-		height: 100vh-50px;  
+		height: 100vh;  
 		position: relative;
 		background: whitesmoke;
 	}
@@ -381,7 +455,7 @@
 		flex-wrap: wrap; 
 		justify-content: center;
 		background-color: white;
-		font-size: 35rpx;
+		font-size: 28rpx;
 	}
 	.select-shore{
 		/* align-items: center; */
@@ -436,7 +510,6 @@
 		background-color: whitesmoke;
 	}
 	.select-picker-text{
-		font-size: 35rpx;
 		
 	}
 	.select-picker-db{
@@ -448,7 +521,7 @@
 		height: 50rpx;
 		padding: 8rpx 25rpx;
 		line-height:50rpx;
-		font-size:35rpx;
+		/* font-size:35rpx; */
 	}
 	.select-search{
 		/* flex: 1; */
@@ -457,7 +530,7 @@
 		/* margin: 5px 0px 0px 0px; */
 		padding-top: 0;
 		padding-bottom: 0;
-			font-size: 35rpx;
+			font-size: 28rpx;
 			/* width: 20%; */
 			
 		/* margin: 8rpx 0; */
@@ -490,14 +563,78 @@
 		text-align: center;
 		color: darkgray;
 	}
-	.scroll-firms-detail{
-		margin-top: 5px;
-		padding: 10px 10%;
+	
+	
+	.row{
 		display: flex;
-		flex-direction: row;
-		align-items: center;
-		background: white;
+		flex-direction: column;
+		background-color: white;
+		font-size: 26rpx;
+		margin-top: 8px;
+		padding-top: 5px;
 	}
+	.title{
+		font-size: 12px;
+		padding: 5px 10px;
+		width: 100%;
+		height: 20px;
+		background-color: #d4d9ec;
+		display: flex;
+		align-items: center;
+		flex-direction: row;
+	}
+	.scripe{
+		background-color: aqua;
+		width: 5px;
+		height: 80%;
+		border-radius: 2px;
+		margin-right: 10px;
+	}
+	.line{
+		/* margin: 5px 0; */
+		/* background-color: white; */
+		display: flex;
+		align-items: center;
+		justify-content: flex-start;
+		margin-top: 10px;
+		/* 不换行，自动以。。。代替 */
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		
+		
+	}
+	.line-text{
+		width: 30%;
+		margin-left: 20px;
+		/* font-size: 12px; */
+		display: flex;
+	}
+	.line-text view{
+		color: red;
+	}
+	.uni-input{
+		/* padding: 0px 0px; */
+		height: auto;
+		margin-right: 20px;
+		flex-grow: 1;
+		border-radius: 5px;/* 
+		border: 2px solid black; */
+		padding-left: 10px;
+		white-space: nowrap;
+		overflow: scroll;
+		/* text-overflow: ellipsis; */
+	}
+	
+	.bottom{
+		padding: 20px 0;
+	}
+	.bottom-btn{
+		/* padding: 0 50px; */
+		margin: 0 50px;
+		background-color: #5d73d9;
+	}
+	
 	
 	
 	

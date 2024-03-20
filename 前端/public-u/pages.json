@@ -40,13 +40,13 @@
 			},
 			{
 				"pagePath": "pages/publish/publish",
-				"text": "发布页面（暂无）"
+				"text": "我要发布"
 			}
 		]
 	},
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
-		"navigationBarTitleText": "hello",
+		"navigationBarTitleText": "",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8"
 	},
