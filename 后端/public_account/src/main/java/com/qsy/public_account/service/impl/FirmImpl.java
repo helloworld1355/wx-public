@@ -80,4 +80,14 @@ public class FirmImpl implements FirmService {
         return list;
     }
 
+    /**
+     * @desc 根据id查询单个公司信息
+     * @author qsy
+     * @date 2023/03/28
+     * */
+    @Override
+    public FirmInfo getFirmInfoItem(int id){
+        return firmInfoMapper.selectById(id);
+    }
+
 }

@@ -19,5 +19,5 @@ public interface FirmService {
 //      获取信息
     List<FirmInfo> getFirmInfoList(int page, int size);
 
-
+    FirmInfo getFirmInfoItem(int id);
 }

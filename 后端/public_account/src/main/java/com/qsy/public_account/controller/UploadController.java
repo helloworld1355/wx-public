@@ -36,7 +36,7 @@ public class UploadController {
     @PostMapping("/addFirmInfo")
     @ResponseBody
     public Result<Boolean> uploadFirmInfo(@RequestBody FirmRecive recive)  {
-        logger.info("receive : /upload/addFirmInfo");
+        logger.info("接收到api请求 : /upload/addFirmInfo;");
         Result<Boolean> rs = new Result<>();
         FirmInfo info = new FirmInfo();
         RecToEntity.firmTransfer(recive, info);
