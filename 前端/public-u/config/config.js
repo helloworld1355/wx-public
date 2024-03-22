@@ -1,12 +1,10 @@
 export default{
-	domain:'http://39.106.11.151:8080/api/',
-	upload:'http://39.106.11.151:8080/upload/',
-	imgUrl:'http://localhost/api/',
-	audioUrl:'http://localhost/api/',
-	url:'http://localhost/api/',
+	// 正式环境
+	// domain:'http://39.106.11.151:8080/api/',
+	// upload:'http://39.106.11.151:8080/upload/',
 	
-	// domain:'http://localhost:8080/api/',
-	// imgUrl:'http://localhost/api/',
-	// audioUrl:'http://localhost/api/',
-	// url:'http://localhost/api/',
+	// 开发环境
+	domain:'http://10.177.13.153:8080/api/',
+	upload:'http://10.177.13.153:8080/upload/',
+
 }

@@ -13,7 +13,7 @@
 					<view class="line-text" >
 						公司名称 
 						<view >&nbsp*</view>
-						：
+						
 					</view>
 					<view class="uni-input" style="display: flex;">
 						<input class="uni-input-item"  v-model="uploadData.firmName" type="nickname" placeholder="请输入公司名称" />
@@ -30,7 +30,7 @@
 							&nbsp*
 						</view>：
 					</view>
-					<picker class="uni-input" mode="selector" :range="sectorsData" :value="sectorsIndex" @change="sectorsChange" >
+					<picker class="uni-input" mode="selector" :range="sectorsData" :value="sectorsIndex" @change="pickerClick($event, 'sectorsData')" >
 						<view >{{ sectorsData[sectorsIndex] }}</view>
 					</picker>
 				</view>
@@ -43,16 +43,16 @@
 						<view >&nbsp*</view>
 						：
 					</view>
-					<picker class="uni-input" mode="multiSelector"  @columnchange="pickerColumnChange" @change="pickerChange" :value="multiIndex" :range="multiArrary">
+					<picker class="uni-input" mode="multiSelector"  @columnchange="pickerColumnChange" @change="pickerClick($event, 'multiArrary')" :value="multiIndex" :range="multiArrary">
 						<view  >{{ uploadData.firmLocation }}</view>
 					</picker>
 				</view>	
 				
-				<!-- 详细地址选择 -->
+				<!-- 详细地址 -->
 				<view class="line">
 					<view class="line-text">
 						详细地址
-						<view >&nbsp*</view>
+						<view >&nbsp</view>
 						：
 					</view>
 					<view class="uni-input" style="display: flex;">
@@ -102,7 +102,7 @@
 						<view >&nbsp*</view>
 						：
 					</view>
-					<picker  class="uni-input" mode="selector" :range="taxableData" :value="taxableIndex" @change="taxableChange" >
+					<picker  class="uni-input" mode="selector" :range="taxableData" :value="taxableIndex" @change="pickerClick($event, 'taxableData')" >
 						<view >{{ taxableData[taxableIndex] }}</view>
 					</picker>
 				</view>
@@ -114,16 +114,19 @@
 						<view >&nbsp*</view>
 						：
 					</view>
-					<picker class="uni-input" mode="date" start="2000-1-1" end="2025-1-1" @change="dateChange"  >
-						<view >{{uploadData.firmEstablishDate}}</view>
+					<picker class="uni-input"  @change="pickerClick($event, 'yearData')" :value="yearIndex" :range="yearData" >
+						<view v-if="uploadData.firmEstablishDate" >{{uploadData.firmEstablishDate}}</view>
+						<view v-else>请选择注册时间</view>
 					</picker>
+					
+					
 				</view>
 				
 				<!-- 归属税局 -->
 				<view class="line" >
 					<view class="line-text">
 						归属税局：
-						<view >&nbsp*</view>
+						<view >&nbsp</view>
 						：
 					</view>
 					<view class="uni-input" style="display: flex;">
@@ -144,7 +147,7 @@
 				<!-- 联系人 -->
 				<view class="line" >
 					<view class="line-text">
-						姓名
+						联系人
 						<view >&nbsp*</view>
 						：
 					</view>
@@ -218,6 +221,10 @@
 				multiArrary:[[], [], []],
 				multiIndex: [0,0,0],
 				
+				// 时间选项
+				yearData:[],
+				yearIndex:0,
+				
 				// 纳税性质
 				taxableData: [],
 				taxableIndex: 0,
@@ -235,7 +242,7 @@
 					firmLocation:'',
 					firmLocationDetail:'',
 					firmTaxableType:'',
-					firmEstablishDate:'2000-01-01',
+					firmEstablishDate:'',
 					firmBusinessScope:'',
 					firmTaxBelong:'',
 					firmContacts:'',
@@ -245,68 +252,68 @@
 				}
 			}
 		},
-		
-		onLoad() {
-			let that = this;
-			console.log("config :",config);
+		onReady() {
 			uni.setNavigationBarTitle({
 				title: '我要发布'
 			});
+		},
+		
+		
+		onLoad() {
+			let that = this;
 			
-			// 获取区域数据
-			// h5请求本地json格式数据
-			fetch('/static/data/pca.json')
-				.then(response => {
-					if (!response.ok) {
-					  throw new Error('请求失败');
-					}
-					return response.json();
-				})
-				.then(data => {
-					// 处理数据
-					// 将地区数据转换成数组格式
-					that.provinces = Object.keys(data);
-					that.cities = [];
-					that.districts = [];
-					
-					that.provinces.forEach(province => {
-						const cityNames = Object.keys(data[province]);
-						const cityArray = [];
-						const districtArray = [];
-
-						cityNames.forEach(city => {
-						cityArray.push(city);
-						districtArray.push(data[province][city]);
-						});
-
-						that.cities.push(cityArray);
-						that.districts.push(districtArray);
-					});
-					
-					that.multiArrary[0] = that.provinces;
-					that.multiArrary[1] = that.cities[0];
-					that.multiArrary[2] = that.districts[0][0];
-					
-					that.uploadData.firmLocation = that.provinces[0] + "-" + that.cities[0][0] + "-" + that.districts[0][0][0] ;
-					console.log('省份数据：', that.provinces);
-					console.log('城市数据：', that.cities);
-					console.log('区县数据：', that.districts);
-				})
-				.catch(error => {
-					console.error('请求失败：', error.message);
-				});
-			
-			// 获取行业数据
-			that.sectorsData = ['科技','美食','教育'];
-			that.uploadData.firmSectorType = that.sectorsData[0];
-			
-			// 获取行业性质
-			that.taxableData = ['性质1','性质2','性质3'];
-			that.uploadData.firmTaxableType = that.taxableData[0];
-			
-			
+			that.init();
 		},
 		methods: {
+			/**
+			 * @desc 数据初始化，从缓存中获取配置信息。从后端获取公司详情
+			 */
+			init:function(){
+				let that = this;
+				uni.getStorage({
+					key: 'optionConfig',
+					success: function (res) {
+						that.sectorsData = res.data.sectorsData;
+						that.taxableData = res.data.taxableData;
+						that.yearData = res.data.yearData;
+						console.log("获取选项配置成功！：",res.data);
+					},
+					fail:function(res) {
+						console.error("获取选项配置缓存失败！",res);
+						that.opentionInit();
+						
+					}
+				});
+				
+				uni.getStorage({
+					key: 'areaData',
+					success:function(res){
+						console.log("获取地域缓存成功！！");
+						that.provinces = res.data.provinces;
+						that.cities = res.data.cities;
+						that.districts = res.data.districts;
+						
+						that.multiArrary[0] = that.provinces;
+						that.multiArrary[1] = that.cities[0];
+						that.multiArrary[2] = that.districts[0][0];
+						that.uploadData.firmLocation = that.provinces[0] + "-" + that.cities[0][0] + "-" + that.districts[0][0][0] ;
+					},
+					fail:function(res){
+						console.log("获取缓存失败，重新拉取数据!",res);
+						that.uploadAreaData();
+					}
+				})
+			},
+			
+			// 清除输入框按键
+			clearIcon:function(test){
+				if(this.uploadData.hasOwnProperty(test)){
+					console.log("存在",this.uploadData[test]);
+					this.uploadData[test] = '';
+				}else {
+					console.log("不存在");
+				}
+			},
 			
 			// 选择器改变触发函数
 			pickerColumnChange:function(e){
@@ -329,37 +336,53 @@
 						break;
 					}
 				}
-				that.uploadData.firmLocation = that.multiArrary[0][that.multiIndex[0]] + "-" + that.multiArrary[1][that.multiIndex[1]] + "-" + that.multiArrary[2][that.multiIndex[2]] ;
+				//that.uploadData.firmLocation = that.multiArrary[0][that.multiIndex[0]] + "-" + that.multiArrary[1][that.multiIndex[1]] + "-" + that.multiArrary[2][that.multiIndex[2]] ;
 				
 			},
 			
-			sectorsChange:function(e){
+			/**
+			  * @desc 选择器选择事件
+			  * */
+			pickerClick:function(e,str){
 				let that = this;
-				this.sectorsIndex = e.detail.value;
-				that.uploadData.firmSectorType = that.sectorsData[this.sectorsIndex];
-			},
-			taxableChange:function(e){
-				let that = this;
-				this.taxableIndex = e.detail.value;
-				that.uploadData.firmTaxableType = that.taxableData[this.taxableIndex];
-			},
-			dateChange:function(e){
-				let that = this;
-				that.uploadData.firmEstablishDate = e.detail.value;
-			},
-			
-			
-			// 清除输入框按键
-			clearIcon:function(test){
-				if(this.uploadData.hasOwnProperty(test)){
-					console.log("存在",this.uploadData[test]);
-					this.uploadData[test] = '';
-				}else {
-					console.log("不存在");
+				if(str === 'multiArrary'){
+					const value = e.detail.value;
+					if(value[0]=='0'){
+						that.uploadData.firmLocation = '全部';
+						return;
+					}
+					that.multiIndex = value;
+					that.multiArrary[1] = that.cities[that.multiIndex[0]];
+					that.multiArrary[2] = that.districts[that.multiIndex[0]][that.multiIndex[1]];
+					that.uploadData.firmLocation = that.multiArrary[0][value[0]] + "-" + that.multiArrary[1][value[1]] + "-" + that.multiArrary[2][value[2]] ;
+					console.log("选择：",str);
+					console.log("值：:",value);
+					
+				}
+				if(str === 'yearData'){
+					console.log("选择：",str);
+					console.log("值：:",e.detail.value);
+					this.yearIndex = e.detail.value;
+					
+				}
+				if(str === 'sectorsData'){
+					console.log("选择：",str);
+					console.log("值：:",e.detail.value);
+					this.sectorsIndex = e.detail.value;
+					
+				}
+				if(str === 'taxableData'){
+					console.log("选择：",str);
+					console.log("值：:",e.detail.value);
+					this.taxableIndex = e.detail.value;
 				}
 			},
 			
-			// 发布按钮
+			/**
+			  * @title 发布按钮执行函数
+			  * @desc 上传到接口upload/addFirmInfo，
+			  * 
+			  * */
 			publishClick:function(){
 				let that = this;
 				uni.showLoading({
@@ -392,8 +415,134 @@
 					}
 				})
 				
-			}
+			},
 			
+			/**
+			  * @TODO 需写缓存
+			  * @title 地区文件读取
+			  * @desc 从static/data中读取地区json数据
+			  * */
+			uploadAreaData:function(){
+				let that = this;
+				fetch('/static/data/pca.json')
+					.then(response => {
+						if (!response.ok) {
+						  throw new Error('请求失败');
+						}
+						return response.json();
+					})
+					.then(data => {
+						// 处理数据
+						// 将地区数据转换成数组格式
+						that.provinces = Object.keys(data);
+						that.cities = [];
+						that.districts = [];
+						
+						that.provinces.forEach(province => {
+							const cityNames = Object.keys(data[province]);
+							const cityArray = [];
+							const districtArray = [];
+				
+							cityNames.forEach(city => {
+							cityArray.push(city);
+							districtArray.push(data[province][city]);
+							});
+				
+							that.cities.push(cityArray);
+							that.districts.push(districtArray);
+						});
+						
+						that.multiArrary[0] = that.provinces;
+						that.multiArrary[1] = that.cities[0];
+						that.multiArrary[2] = that.districts[0][0];
+						
+						that.uploadData.firmLocation = that.provinces[0] + "-" + that.cities[0][0] + "-" + that.districts[0][0][0] ;
+						
+						
+						uni.setStorage({
+							key:'areaData',
+							data:{
+								provinces: that.provinces,
+								cities: that.cities,
+								districts: that.districts,
+							},
+							success:function(res){
+								console.log("地域数据保存成功：",res);
+							}
+						})
+					})
+					.catch(error => {
+						console.error('请求失败：', error.message);
+					});
+			},
+			
+			/**
+			 * @desc 成立年份、行业、纳税性质、广告图片、地区选项初始化;
+			 * 		 并保存到缓存，key：optionConfig
+			 * */
+			opentionInit:function(){
+				let that = this;
+				// 测试用
+				
+				// 正式用
+				uni.request({
+					url:config.domain + 'configList',
+					method:'POST',
+					header:{
+						'Content-Type': 'application/x-www-form-urlencoded'  
+					}, 
+				
+					success(res) {
+						that.uploadAreaData();
+						const sectorList = res.data.data.sectors.split(',');
+						const taxableList = res.data.data.taxables.split(',');
+						const yearList = res.data.data.years.split(',');
+						console.log("years:",yearList);
+						var imageTemp = res.data.data.imgSrc.split(';;');
+						// 存入成立年份
+						for(var i=0; i<yearList.length - 1; i++){
+							that.yearData.push(yearList[i]);
+						}
+						// 存入行业
+						for(var i=0; i<sectorList.length - 1; i++){
+							that.sectorsData.push(sectorList[i]);
+						}
+						// 存入纳税性质
+						for(var i=0; i<taxableList.length - 1; i++){
+							that.taxableData.push(taxableList[i]);
+						}
+						var imagelist =[];
+						// 存入首页图片
+						for(var i=0; i<imageTemp.length - 1; i++){
+							var temp = imageTemp[i].split(',,');
+							let src = temp[0];
+							let web = temp[1];
+							var item = {
+								src : src,
+								web : web
+							}
+							if(item == '')
+							 break;
+							imagelist.push(item);
+						}
+						uni.setStorage({
+							key:'optionConfig',
+							data:{
+								yearData: that.yearData,
+								sectorsData: that.sectorsData,
+								taxableData: that.taxableData,
+								imageList: imagelist
+							},
+							success:function(res){
+								console.log("成功",res);
+							}
+						})
+						that.yearData.unshift('全部');
+						that.sectorsData.unshift('全部');
+						that.taxableData.unshift('全部');
+					}
+				})
+			},
 			
 		}
 	}
