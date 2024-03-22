@@ -30,6 +30,9 @@ public class InitConfig implements Serializable {
 //    @ApiModelProperty("@desc  图片路径数组")
     private String imgSrc;
 
+//    @ApiModelProperty("@desc  年份选择器 @sample  1年；2年；3年及之后")
+    private String years;
+
     @Override
     public String toString() {
         return "InitConfig{" +
@@ -37,6 +40,7 @@ public class InitConfig implements Serializable {
             ", sectors = " + sectors +
             ", taxables = " + taxables +
             ", imgSrc = " + imgSrc +
+            ", years = " + years +
         "}";
     }
 }
