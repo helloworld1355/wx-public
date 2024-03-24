@@ -16,6 +16,12 @@
 				</swiper>
 			</view>
 			
+			<!-- 转让或求购 -->
+			<view class="classify">
+				<button class="classify-item" :class="{'isSelectT':isTransfer}" @click="changeSelect('transfer')">转让</button>
+				<button class="classify-item" :class="{'isSelectP':!isTransfer}" @click="changeSelect('purchase')">求购</button>
+			</view>
+			
 			<!-- 选择区域 -->
 			<view class="select">
 			
@@ -81,11 +87,14 @@
 			
 			<!-- 公司列表 -->
 			<view class="scroll-firms" v-if="firmsData != '' && firmsData != undefined ">
-				<view v-for="(item,index) in showFirms" class="firms" :key="item.id" @click="firmClick(item.id)">
+				<view v-for="(item,index) in firmsData" class="firms" :key="item.id" @click="firmClick(item.id)">
 					<!-- 头部公司名称 -->
-					<view class="firms-item">
+					<view v-if="isTransfer" class="firms-item">
 						<view class="firms-item-top-left">公司转让</view>
 						<view class="firms-item-top-right">{{ item.firmName }}</view>
+					</view>
+					<view v-else class="firms-item">
+						<view class="firms-item-top-left" style="background-color: #0088ff;">公司求购</view>
 					</view>
 					
 					<!-- 中部，公司大致信息 -->
@@ -112,8 +121,11 @@
 					
 					<!-- 底部售价，发布等信息 -->
 					<view class="firms-item firms-item-bottom">
-						<view>
+						<view v-if="isTransfer">
 							售价：{{ item.firmPriceTransfer }} 元
+						</view>
+						<view v-else>
+							求购：{{ item.firmPriceTransfer }} 元
 						</view>
 						
 						<view>
@@ -131,6 +143,7 @@
 		</scroll-view>
 	</view>
 </template>
+
 
 <script>
 	import config from '@/config/config.js';
@@ -167,7 +180,10 @@
 				// 发布时间
 				showTime:[],
 				// 公司数据,展示的公司数组
-				firmsData:[]
+				firmsData:[],
+				
+				// 转让或求购
+				isTransfer:1,
 				// showFirms:[],
 				
 				isloading:0
@@ -187,6 +203,11 @@
 			
 			
 		},
+		
+		/**
+		  * @TODO 待添加加载数据的动画；
+		  * */
+		
 		methods: {
 			
 			/**
@@ -249,6 +270,15 @@
 					url:'/pages/index/detail?id='+index
 				})
 				
+			},
+			
+			// 点击切换转让，求购页面
+			changeSelect:function(str){
+				if(str == 'transfer'){
+					this.isTransfer = 1;
+				}else if(str == 'purchase'){
+					this.isTransfer = 0;
+				}
 			},
 			
 			
@@ -378,29 +408,6 @@
 				that.firmsData = [];
 				that.uploadFirmsInfo();
 				
-				/* const selSector = that.sectorsData[that.sectorsData_index];
-				const selTaxable = that.taxableData[that.taxableData_index];
-				const selYear = that.yearData[that.yearData_index];
-				const selLocation = that.showLocation;
-				
-				// sectorsData taxableData yearData
-				if( selSector != '全部'){
-					console.log("selSector:",selSector);
-					that.showFirms = that.showFirms.filter(item => item.firmSectorType == selSector);
-				}
-				if( selTaxable != '全部'){
-					console.log("selTaxable:",selTaxable);
-					that.showFirms = that.showFirms.filter(item => item.firmTaxableType == selTaxable);
-				}
-				if( selYear != '全部'){
-					console.log("selYear:",selYear);
-					that.showFirms = that.showFirms.filter(item => item.firmEstablishDate == selYear);
-				}
-				if( selLocation != '全部' ){
-					console.log("selLocation:",selLocation);
-					that.showFirms = that.showFirms.filter(item => item.firmLocation == selLocation);
-				}
-				that.getTime(that.showFirms); */
 			},
 			
 			/**
@@ -625,26 +632,6 @@
 		background: whitesmoke;
 		
 	}
-	/* 搜索框要固定顶部时使用 */
-	/* .top-contain{
-		position: fixed;
-		z-index: 999;
-		margin: 0px;
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
-	.top-image{
-		height: 30px;
-		width: 30px;
-	}
-	.scroll-line{
-		margin-bottom: 10px;
-		height: 60px;
-		width: 100%;
-		background-color: white;
-	} */
-	
 	.scroll-contain{
 		height: 100%;
 		width: 100%;
@@ -667,6 +654,40 @@
 		border-radius: 10px;
 	}
 	
+	/* 转让或求购 */
+	.classify{
+		position: sticky;
+		top: 0;
+		z-index: 100;
+		/* height: 10%; */
+		width: 100%;
+		margin-top: 20rpx;
+		display: flex;
+		flex-direction: row;
+		justify-content: space-around;
+		background-color: white;
+		
+	}
+	.classify-item{
+		height: 70rpx;
+		width: 30%;
+		margin: 10rpx 0;
+		color: black;
+		text-align: center;
+		line-height: 70rpx;
+		/* border: 2rpx solid black; */
+		border-radius: 70rpx;
+		background-color: whitesmoke;
+	}
+	.isSelectT{
+		background-color: #ff9300;
+		color: white;
+	}
+	.isSelectP{
+		background-color: #0088ff;
+		color: white;
+	}
+	/* 查询框 */
 	.select{
 		height: auto;
 		width: 100%;
@@ -795,6 +816,7 @@
 		background-color: #ff9300; 
 		color: white;
 	}
+	
 	.firms-item-top-right{
 		margin-top: 7px;
 		margin-left: 10px;
