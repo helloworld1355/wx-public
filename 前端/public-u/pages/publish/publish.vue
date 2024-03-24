@@ -31,7 +31,8 @@
 						</view>：
 					</view>
 					<picker class="uni-input" mode="selector" :range="sectorsData" :value="sectorsIndex" @change="pickerClick($event, 'sectorsData')" >
-						<view >{{ sectorsData[sectorsIndex] }}</view>
+						<view v-if="uploadData.firmSectorType">{{ uploadData.firmSectorType }}</view>
+
 					</picker>
 				</view>
 				
@@ -103,7 +104,8 @@
 						：
 					</view>
 					<picker  class="uni-input" mode="selector" :range="taxableData" :value="taxableIndex" @change="pickerClick($event, 'taxableData')" >
-						<view >{{ taxableData[taxableIndex] }}</view>
+						<view v-if="uploadData.firmTaxableType">{{ uploadData.firmTaxableType }}</view>
+	
 					</picker>
 				</view>
 				
@@ -116,7 +118,7 @@
 					</view>
 					<picker class="uni-input"  @change="pickerClick($event, 'yearData')" :value="yearIndex" :range="yearData" >
 						<view v-if="uploadData.firmEstablishDate" >{{uploadData.firmEstablishDate}}</view>
-						<view v-else>请选择注册时间</view>
+
 					</picker>
 					
 					
@@ -303,6 +305,9 @@
 						that.uploadAreaData();
 					}
 				})
+				that.uploadData.firmSectorType = that.sectorsData[that.sectorsIndex];
+				that.uploadData.firmTaxableType = that.taxableData[that.taxableIndex];
+				that.uploadData.firmEstablishDate = that.yearData[that.yearIndex];
 			},
 			
 			// 清除输入框按键
@@ -363,18 +368,19 @@
 					console.log("选择：",str);
 					console.log("值：:",e.detail.value);
 					this.yearIndex = e.detail.value;
-					
+					this.uploadData.firmEstablishDate = this.yearData[this.yearIndex];
 				}
 				if(str === 'sectorsData'){
 					console.log("选择：",str);
 					console.log("值：:",e.detail.value);
 					this.sectorsIndex = e.detail.value;
-					
+					this.uploadData.firmSectorType = this.sectorsData[this.sectorsIndex];
 				}
 				if(str === 'taxableData'){
 					console.log("选择：",str);
 					console.log("值：:",e.detail.value);
 					this.taxableIndex = e.detail.value;
+					this.uploadData.firmTaxableType = this.taxableData[this.taxableIndex];
 				}
 			},
 			
@@ -418,7 +424,6 @@
 			},
 			
 			/**
-			  * @TODO 需写缓存
 			  * @title 地区文件读取
 			  * @desc 从static/data中读取地区json数据
 			  * */
@@ -551,12 +556,9 @@
 <style>
 	.content{
 		/* width: 100%; */
-		height: 100vh-50px;
+		height: 94vh;
 		display: flex;
 		flex-direction: column;
-		/* justify-content: center; */
-		/* align-items: center;  */
-		/* height: 100vh;  */
 		position: relative;
 		background: whitesmoke;
 	}

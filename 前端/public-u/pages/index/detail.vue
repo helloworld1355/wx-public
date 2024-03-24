@@ -1,27 +1,7 @@
 <template>
 	<view class="content">
-		
-		<!-- <view class="weui-search-bar">
-			<view class="uni-form-item uni-column input-up">
-				<input class="uni-input" confirm-type="search" placeholder="键盘右下角按钮" selection-start="5" selection-end="20" />
-			</view>
-		</view> -->
-		<!-- 搜索框固定 -->
-		<!-- <view class="top-contain">
-			<image class="top-image" src="../../static/image/location.png" mode="aspectFit"></image>
-			<view >廊坊</view>
-			<uni-section class="uni-section" type="line">
-					<uni-search-bar @confirm="search" :focus="true" v-model="searchValue" @blur="blur" @focus="focus" @input="input" 
-						@clear="clear" cancelButton="none">
-					</uni-search-bar>
-			</uni-section>
-			
-			<image class="top-image" src="../../static/image/筛选.png"></image>
-		</view> -->
 	
 		<scroll-view class="scroll-contain" scroll-y="true">
-			<!-- 搜索框固定==占位，否则搜索框是浮动，脱离文档流的，会重叠 -->
-			<!-- <view class="scroll-line"></view> -->
 		
 			<!-- 顶部图片轮播 -->
 			<view class="swiper-contain">
@@ -223,6 +203,10 @@
 				})
 			},
 			
+			/**
+			 * @desc 成立年份、行业、纳税性质、广告图片、地区选项初始化;
+			 * 		 并保存到缓存，key：optionConfig
+			 * */
 			opentionInit:function(){
 				let that = this;
 				// 测试用
@@ -372,6 +356,7 @@
 		width: 100%;
 		height: 20px;
 		background-color: #ff9300;
+		color: white;
 		display: flex;
 		align-items: center;
 		flex-direction: row;

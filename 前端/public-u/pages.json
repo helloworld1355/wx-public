@@ -4,7 +4,8 @@
 			"path": "pages/index/index",
 			"style": {
 				// "navigationBarTitleText": "uni-app"
-				"titleNView": false
+				"titleNView": false,
+				"enablePullDownRefresh": true
 			}
 		}
 	    ,{
@@ -30,6 +31,7 @@
     ],
 	"tabBar": {
 		"color": "#000",
+		"height": "6vh",
 		"selectedColor": "#3cc51f",
 		"borderStyle": "black",
 		"backgroundColor": "#ffffff",

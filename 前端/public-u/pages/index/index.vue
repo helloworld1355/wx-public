@@ -1,7 +1,7 @@
 <template>
 	<view class="content">
 	
-		<scroll-view class="scroll-contain" scroll-y="true">
+		<scroll-view @scrolltolower="scrollLoad" class="scroll-contain" scroll-y="true">
 			<!-- 搜索框固定==占位，否则搜索框是浮动，脱离文档流的，会重叠 -->
 			<!-- <view class="scroll-line"></view> -->
 		
@@ -41,8 +41,8 @@
 						</view>
 						<view class="select-picker-db">
 							<picker  @change="pickerClick($event, 'yearData')" :value="yearData_index" :range="yearData" >
-								<view v-if="yearData != ''" class="select-picker-input ispicker">{{yearData[yearData_index]}}</view>
-								<view v-else class="select-picker-input ispicker">全部</view>
+								<view class="select-picker-input ispicker">{{yearData[yearData_index]}}</view>
+								<!-- <view v-else class="select-picker-input ispicker">全部</view> -->
 							</picker>
 						</view>
 					</view>
@@ -80,7 +80,7 @@
 			</view>
 			
 			<!-- 公司列表 -->
-			<view class="scroll-firms" v-if="showFirms != '' && showFirms != undefined ">
+			<view class="scroll-firms" v-if="firmsData != '' && firmsData != undefined ">
 				<view v-for="(item,index) in showFirms" class="firms" :key="item.id" @click="firmClick(item.id)">
 					<!-- 头部公司名称 -->
 					<view class="firms-item">
@@ -121,6 +121,8 @@
 						</view>
 					</view>
 				</view>
+				
+				<view style="margin: 20rpx 0 30rpx 0;" v-if="isloading">已无更多</view>
 			</view>
 			<view v-else class="scroll-firms-none">
 				无数据！
@@ -136,7 +138,11 @@
 		data() {
 			return {
 				title: 'Hello',
-				// 查询选项配置
+				// 数据获取设置
+				page: 1,
+				size: 5,
+				
+				// 选项器配置
 				sectorsData : [],
 				taxableData: [],
 				yearData:[],
@@ -161,8 +167,10 @@
 				// 发布时间
 				showTime:[],
 				// 公司数据,展示的公司数组
-				firmsData:[],
-				showFirms:[]
+				firmsData:[]
+				// showFirms:[],
+				
+				isloading:0
 			}
 		},
 		
@@ -177,6 +185,7 @@
 		onLoad() {
 			this.init();
 			
+			
 		},
 		methods: {
 			
@@ -186,6 +195,7 @@
 			init:function(){
 				let that = this;
 				
+				that.isloading = 0;
 				// 获取选项配置缓存
 				uni.getStorage({
 					key: 'optionConfig',
@@ -213,11 +223,15 @@
 						that.provinces = res.data.provinces;
 						that.cities = res.data.cities;
 						that.districts = res.data.districts;
+						that.provinces.unshift('全部');
+						that.cities.unshift('');
+						that.districts.unshift('');
 						
 						that.multiArrary[0] = that.provinces;
 						that.multiArrary[1] = that.cities[0];
 						that.multiArrary[2] = that.districts[0][0];
-						that.uploadData.firmLocation = that.provinces[0] + "-" + that.cities[0][0] + "-" + that.districts[0][0][0] ;
+						
+						that.showLocation = that.provinces[0] + "-" + that.cities[0][0] + "-" + that.districts[0][0][0] ;
 					},
 					fail:function(res){
 						console.log("获取缓存失败，重新拉取数据!",res);
@@ -255,7 +269,7 @@
 					}, 
 				
 					success(res) {
-						that.uploadAreaData();
+						// that.uploadAreaData();
 						const sectorList = res.data.data.sectors.split(',');
 						const taxableList = res.data.data.taxables.split(',');
 						const yearList = res.data.data.years.split(',');
@@ -301,6 +315,8 @@
 						that.yearData.unshift('全部');
 						that.sectorsData.unshift('全部');
 						that.taxableData.unshift('全部');
+						
+						
 					}
 				})
 			},
@@ -309,34 +325,60 @@
 			 * @desc 从服务器获取公司数据，并处理数据。
 			 */
 			uploadFirmsInfo:function(){
-				 let that = this;
+				let that = this;
+				var sector = that.sectorsData[that.sectorsData_index];
+				var taxable = that.taxableData[that.taxableData_index];
+				var year = that.yearData[that.yearData_index];
+				var location = that.showLocation;
+				if(sector == '全部')
+					sector = '';
+				if(taxable == '全部')
+					taxable = '';
+				if(year  == '全部')
+					year = '';
+				if(location == '全部')
+					location = '';
+				
 				uni.request({
-					url:config.domain + 'firmInfoList',
+					url:config.domain + 'firmShowInfo',
 					header: {  
 						'Content-Type': 'application/x-www-form-urlencoded'  
 					}, 
 					data:{
-						page: 1,
-						size: 8
+						page: that.page,
+						size: that.size,
+						location: location,
+						year: year,
+						sector: sector,
+						taxable: taxable
 					},
 					method:'POST',
 					success(res) {
+						console.log("获取公司数据",res.data);
+						if(res.data.length == 0)
+							that.isloading = 1;
+						for(var i=0; i<res.data.length; i++){
+							that.firmsData.push(res.data[i]);
+							that.getTime(that.firmsData);
+							// that.showFirms.push(res.data[i]);
+						}
 						
-						that.firmsData = res.data;
-						that.getTime(that.firmsData);
-						that.showFirms = that.firmsData;
 					}
 				})
 			},
 			
 			/**
 			  * @desc  查询按钮函数
-			  * @TODO 区域查询
 			  */
 			searchFirm:function(){
 				let that = this;
-				that.showFirms = that.firmsData;
-				const selSector = that.sectorsData[that.sectorsData_index];
+				that.isloading = 0;
+				that.page = 1;
+				// that.showFirms = [];
+				that.firmsData = [];
+				that.uploadFirmsInfo();
+				
+				/* const selSector = that.sectorsData[that.sectorsData_index];
 				const selTaxable = that.taxableData[that.taxableData_index];
 				const selYear = that.yearData[that.yearData_index];
 				const selLocation = that.showLocation;
@@ -358,7 +400,7 @@
 					console.log("selLocation:",selLocation);
 					that.showFirms = that.showFirms.filter(item => item.firmLocation == selLocation);
 				}
-				that.getTime(that.showFirms);
+				that.getTime(that.showFirms); */
 			},
 			
 			/**
@@ -448,18 +490,9 @@
 							that.cities.push(cityArray);
 							that.districts.push(districtArray);
 						});
-						that.provinces.unshift('全部');
-						that.cities.unshift('');
-						that.districts.unshift('');
 						
-				
 						
-						that.multiArrary[0] = that.provinces;
-						that.multiArrary[1] = that.cities[0];
-						that.multiArrary[2] = that.districts[0][0];
 						
-						that.showLocation = that.provinces[0] + "-" + that.cities[0][0] + "-" + that.districts[0][0][0] ;
-
 						uni.setStorage({
 							key:'areaData',
 							data:{
@@ -469,8 +502,20 @@
 							},
 							success:function(res){
 								console.log("地域数据保存成功：",res);
+								
 							}
 						})
+						
+						that.provinces.unshift('全部');
+						that.cities.unshift('');
+						that.districts.unshift('');
+						
+						that.multiArrary[0] = that.provinces;
+						that.multiArrary[1] = that.cities[0];
+						that.multiArrary[2] = that.districts[0][0];
+						
+						that.showLocation = that.provinces[0] + "-" + that.cities[0][0] + "-" + that.districts[0][0][0] ;
+						
 
 					})
 					.catch(error => {
@@ -530,7 +575,35 @@
 					that.showTime.push(publish);
 				}
 		
+			},
+			
+			/**
+			  * @desc scroll-view的上拉加载更多
+			  * 
+			 */
+			scrollLoad:function(){
+				
+				if(this.isloading == 0){
+					this.page++;
+					console.log("this.page = ",this.page);
+					this.uploadFirmsInfo();
+				}
 			}
+			
+		},
+		
+		/* 下拉刷新 */
+		onPullDownRefresh() {
+			console.log('refresh');
+			this.firmsData = [];
+			// this.showFirms = [];
+			this.page = 0;
+			this.isloading = 0;
+			this.uploadFirmsInfo();
+			
+			console.log("结束");
+			// 停止下拉刷新动画
+			uni.stopPullDownRefresh();
 		}
 	}
 </script>
@@ -546,7 +619,8 @@
 		flex-direction: column;
 		/* justify-content: center; */
 		/* align-items: center;  */
-		height: calc(100vh-50px);
+		/* height: calc(80vh); */
+		height: 94vh;
 		position: relative;
 		background: whitesmoke;
 		
@@ -572,7 +646,7 @@
 	} */
 	
 	.scroll-contain{
-		height: 28%;
+		height: 100%;
 		width: 100%;
 		/* margin-top: 60px; */
 	}
