@@ -4,7 +4,9 @@ import com.qsy.public_account.common.Result;
 import com.qsy.public_account.entity.FirmInfo;
 import com.qsy.public_account.entity.FirmRecive;
 
+import com.qsy.public_account.entity.FirmShow;
 import com.qsy.public_account.service.impl.FirmImpl;
+import com.qsy.public_account.service.impl.FirmShowServiceImpl;
 import com.qsy.public_account.utils.RecToEntity;
 import jakarta.annotation.Resource;
 import org.apache.logging.log4j.LogManager;
@@ -25,6 +27,8 @@ public class UploadController {
 
     @Resource
     private FirmImpl firmservice;
+    @Resource
+    private FirmShowServiceImpl showService;
 
     private static final Logger logger = LogManager.getLogger(UploadController.class);
 
@@ -40,18 +44,29 @@ public class UploadController {
         Result<Boolean> rs = new Result<>();
         FirmInfo info = new FirmInfo();
         RecToEntity.firmTransfer(recive, info);
-
-//      添加创建时间
+        FirmShow firmshow = new FirmShow();
         info.setCreateTime(new Date());
-        if(firmservice.addFirmInfo(info)){
-            rs.setCode(200);
-            rs.setMsg("添加成功");
-            rs.setData(true);
+        info.setFirmStatusTransfer(0);
+
+        if (firmservice.addFirmInfo(info)){
+            RecToEntity.firmTransfer(info, firmshow);
+            if(showService.addFirmShow(firmshow)){
+                rs.setCode(200);
+                rs.setMsg("添加成功");
+                rs.setData(true);
+            }else{
+                rs.setCode(500);
+                rs.setMsg("插入失败");
+                rs.setData(false);
+            }
         }else{
             rs.setCode(500);
             rs.setMsg("插入失败");
             rs.setData(false);
         }
+//      添加创建时间
+
+
 
         return rs;
     }
@@ -65,11 +80,19 @@ public class UploadController {
     public Result<Boolean> modifyFirmInfo(@RequestBody FirmInfo recive)  {
         logger.info("receive : /upload/modifyFirmInfo");
         Result<Boolean> rs = new Result<>();
-
+        FirmShow firmshow = new FirmShow();
         if(firmservice.updateFirmInfo(recive)){
-            rs.setCode(200);
-            rs.setMsg("修改成功");
-            rs.setData(true);
+            RecToEntity.firmTransfer(recive, firmshow);
+
+            if(showService.updateFirmShow(firmshow)){
+                rs.setCode(200);
+                rs.setMsg("修改成功");
+                rs.setData(true);
+            }else{
+                rs.setCode(500);
+                rs.setMsg("修改失败");
+                rs.setData(false);
+            }
         }else{
             rs.setCode(500);
             rs.setMsg("修改失败");
@@ -78,6 +101,5 @@ public class UploadController {
 
         return rs;
     }
-
 
 }

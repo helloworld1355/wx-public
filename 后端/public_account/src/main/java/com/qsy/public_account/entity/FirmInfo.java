@@ -45,8 +45,8 @@ public class FirmInfo implements Serializable {
 //    @ApiModelProperty("@desc  公司纳税性质	@sample  一般纳税")
     private String firmTaxableType;
 
-//    @ApiModelProperty("@desc 公司成立日期	@sample  \"2021-01-01 00:00:00\"")
-    private LocalDate firmEstablishDate;
+//    @ApiModelProperty("@desc 公司成立日期	@sample  \"1年\"")
+    private String firmEstablishDate;
 
 //    @ApiModelProperty("@desc  公司营业范围	@sample  科技、餐饮")
     private String firmBusinessScope;
@@ -67,7 +67,7 @@ public class FirmInfo implements Serializable {
     private Double firmRegistCapital;
 
 //    @ApiModelProperty("@desc  暂不使用；公司转让状态")
-    private String firmStatusTransfer;
+    private Integer firmStatusTransfer;
 
 //    @ApiModelProperty("@desc  暂不使用；创建字段时间")
     private Date createTime;

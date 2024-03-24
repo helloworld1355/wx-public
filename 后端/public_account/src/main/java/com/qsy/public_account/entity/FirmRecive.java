@@ -22,7 +22,7 @@ public class FirmRecive {
     private String firmTaxableType;
 
     //    @ApiModelProperty("@desc 公司成立日期	@sample  \"2021-01-01 00:00:00\"")
-    private LocalDate firmEstablishDate;
+    private String firmEstablishDate;
 
     //    @ApiModelProperty("@desc  公司营业范围	@sample  科技、餐饮")
     private String firmBusinessScope;

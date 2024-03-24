@@ -3,8 +3,10 @@ package com.qsy.public_account.controller;
 
 import com.qsy.public_account.common.Result;
 import com.qsy.public_account.entity.FirmInfo;
+import com.qsy.public_account.entity.FirmShow;
 import com.qsy.public_account.entity.InitConfig;
 import com.qsy.public_account.service.impl.FirmImpl;
+import com.qsy.public_account.service.impl.FirmShowServiceImpl;
 import com.qsy.public_account.service.impl.InitConfigServiceImpl;
 import jakarta.annotation.Resource;
 import org.apache.logging.log4j.LogManager;
@@ -31,16 +33,21 @@ public class ApiController {
     @Resource
     private FirmImpl firmimpl;
     @Resource
+    private FirmShowServiceImpl firmshowimpl;
+    @Resource
     private InitConfigServiceImpl configimpl;
 
+
     /**
-     * @desc 获取全部公司信息
+     * @desc 获取展示首页公司信息
      * */
     @ResponseBody
-    @PostMapping("/firmInfoList")
-    public List<FirmInfo> firmInfoList(Integer page, Integer size){
+    @PostMapping("/firmShowInfo")
+    public List<FirmShow> firmInfoList(Integer page, Integer size, String location,  String year, String sector, String taxable){
         logger.info("接收到api请求 : /api/firmInfoList;");
-        List<FirmInfo> list = firmimpl.getFirmInfoList(page,size);
+        System.out.println("location::"+location+"  year::"+year+"  sector::"+sector+"  taxable::"+taxable);
+        List<FirmShow> list = firmshowimpl.getFirmInfoList(page,size,location,year,sector,taxable);
+        System.out.println("list::"+list);
         return list;
     }
 
@@ -71,7 +78,6 @@ public class ApiController {
             rs.setMsg("查询成功！");
         }
         return rs;
-
     }
 
 

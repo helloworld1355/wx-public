@@ -12,6 +12,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class PublicAccountApplication {
 
     public static void main(String[] args) {
+        System.out.println(" BBBBB   H   H    QQQ     K   K    L    ");
+        System.out.println(" B    B  H   H   Q   Q    K  K     L    ");
+        System.out.println(" BBBBB   HHHHH   Q  QQ    KK       L    ");
+        System.out.println(" B    B  H   H   Q   Q    K  K     L    ");
+        System.out.println(" BBBBB   H   H    QQQ Q   K   K    LLLL ");
         SpringApplication.run(PublicAccountApplication.class, args);
     }
 
