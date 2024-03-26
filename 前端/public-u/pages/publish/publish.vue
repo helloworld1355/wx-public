@@ -8,20 +8,20 @@
 			<!-- 转让 -->
 			<view v-if="isTransfer">
 				<view class="row">
-					<view class="title">
-						<view class="scripe"></view>
+					<view class="title" style="background-color: #ff9300;color: black;">
+						<view class="scripe" style="background-color: #0088ff;"></view>
 						公司基本信息
 					</view>
 					
 					<!-- 公司名 -->
-					<view class="line" style="display: flex;">
+					<view ref="firmName" class="line" style="display: flex;">
 						<view class="line-text" >
 							公司名称 
 							<view >&nbsp*</view>
 							
 						</view>
 						<view class="uni-input" style="display: flex;">
-							<input class="uni-input-item"  v-model="uploadData.firmName" type="nickname" placeholder="请输入公司名称" />
+							<input class="uni-input-item"   v-model="uploadData.firmName" type="nickname" placeholder="" @input="saveInputData"/>
 							<!-- <text class="uni-icon" v-if="uploadData.firmPriceTransfer" @click="clearIcon">&#xe434;</text> -->
 							<image src="../../static/image/x.png" class="uni-icon" v-if="uploadData.firmName" @click="clearIcon('firmName')"></image>
 						</view>
@@ -29,7 +29,7 @@
 					
 					
 					<!-- 行业选择 -->
-					<view class="line">
+					<view ref="firmSectorType" class="line">
 						<view class="line-text">行业
 							<view >
 								&nbsp*
@@ -43,7 +43,7 @@
 					
 					
 					<!-- 地区选择器 -->
-					<view class="line">
+					<view ref="firmLocation" class="line">
 						<view class="line-text">
 							注册地址
 							<view >&nbsp*</view>
@@ -62,7 +62,7 @@
 							：
 						</view>
 						<view class="uni-input" style="display: flex;">
-							<input class="uni-input-item" v-model="uploadData.firmLocationDetail" placeholder="请输入公司所在详细地址" @input="clearInput" />
+							<input class="uni-input-item" v-model="uploadData.firmLocationDetail" placeholder=""  @input="saveInputData" />
 							<!-- <text class="uni-icon" v-if="uploadData.firmPriceTransfer" @click="clearIcon">&#xe434;</text> -->
 							<image src="../../static/image/x.png" class="uni-icon" v-if="uploadData.firmLocationDetail" @click="clearIcon('firmLocationDetail')"></image>
 						</view>
@@ -71,14 +71,14 @@
 					
 					
 					<!-- 注册资本 -->
-					<view class="line" style="display: flex;">
+					<view ref="firmRegistCapital" class="line" style="display: flex;">
 						<view class="line-text">
 							注册资本(万元)
 							<view >&nbsp*</view>
 							：
 						</view>
 						<view class="uni-input" style="display: flex;">
-							<input class="uni-input-item" type="digit" v-model="uploadData.firmRegistCapital" placeholder="请输入公司注册资本" />
+							<input class="uni-input-item" type="digit" v-model="uploadData.firmRegistCapital" placeholder=""  @input="saveInputData"/>
 							<!-- <text class="uni-icon" v-if="uploadData.firmPriceTransfer" @click="clearIcon">&#xe434;</text> -->
 							<image src="../../static/image/x.png" class="uni-icon" v-if="uploadData.firmRegistCapital" @click="clearIcon('firmRegistCapital')"></image>
 						</view>
@@ -86,14 +86,14 @@
 					</view>
 					
 					<!-- 营业范围 -->
-					<view class="line" >
+					<view  class="line" >
 						<view class="line-text">
 							营业范围
-							<view >&nbsp*</view>
+							<view >&nbsp</view>
 							：
 						</view>
 						<view class="uni-input" style="display: flex;">
-							<input class="uni-input-item" placeholder="请输入公司营业范围" v-model="uploadData.firmBusinessScope" @input="clearInput" />
+							<input class="uni-input-item" placeholder="" v-model="uploadData.firmBusinessScope"  @input="saveInputData" />
 							<!-- <text class="uni-icon" v-if="uploadData.firmPriceTransfer" @click="clearIcon">&#xe434;</text> -->
 							<image src="../../static/image/x.png" class="uni-icon" v-if="uploadData.firmBusinessScope" @click="clearIcon('firmBusinessScope')"></image>
 						</view>
@@ -102,7 +102,7 @@
 					
 					
 					<!-- 纳税性质 -->
-					<view class="line">
+					<view ref="firmTaxableType" class="line">
 						<view class="line-text">
 							纳税性质
 							<view >&nbsp*</view>
@@ -115,7 +115,7 @@
 					</view>
 					
 					<!-- 注册时间 -->
-					<view class="line" >
+					<view ref="firmEstablishDate" class="line" >
 						<view class="line-text"> 
 							注册时间
 							<view >&nbsp*</view>
@@ -137,7 +137,7 @@
 							：
 						</view>
 						<view class="uni-input" style="display: flex;">
-							<input class="uni-input-item" placeholder="请输入公司所属税务局" v-model="uploadData.firmTaxBelong" @input="clearInput" />
+							<input class="uni-input-item" placeholder="" v-model="uploadData.firmTaxBelong"  @input="saveInputData"/>
 							<!-- <text class="uni-icon" v-if="uploadData.firmPriceTransfer" @click="clearIcon">&#xe434;</text> -->
 							<image src="../../static/image/x.png" class="uni-icon" v-if="uploadData.firmTaxBelong" @click="clearIcon('firmTaxBelong')"></image>
 						</view>
@@ -147,19 +147,19 @@
 				</view>
 				
 				<view class="row" style="margin-top: 10px;">
-				<view class="title">
-					<view class="scripe"></view>
+				<view class="title" style="background-color: #ff9300;color: black;">
+					<view class="scripe" style="background-color: #0088ff;"></view>
 					联系人信息
 				</view>
 				<!-- 联系人 -->
-				<view class="line" >
+				<view ref="firmContacts" class="line" >
 					<view class="line-text">
 						联系人
 						<view >&nbsp*</view>
 						：
 					</view>
 					<view class="uni-input" style="display: flex;">
-						<input class="uni-input-item" placeholder="请输入联系人姓名" v-model="uploadData.firmContacts" @input="clearInput" />
+						<input class="uni-input-item" placeholder="" v-model="uploadData.firmContacts"  @input="saveInputData" />
 						<!-- <text class="uni-icon" v-if="uploadData.firmPriceTransfer" @click="clearIcon">&#xe434;</text> -->
 						<image src="../../static/image/x.png" class="uni-icon" v-if="uploadData.firmContacts" @click="clearIcon('firmContacts')"></image>
 					</view>
@@ -167,13 +167,13 @@
 				</view>	
 					
 				<!-- 联系人电话 -->
-				<view class="line" >
+				<view ref="firmContactsPhone" class="line" >
 					<view class="line-text">电话
 						<view >&nbsp*</view>
 						：
 					</view>
 					<view class="uni-input" style="display: flex;">
-						<input class="uni-input-item" placeholder="请输入联系人电话" v-model="uploadData.firmContactsPhone" @input="clearInput" />
+						<input class="uni-input-item" placeholder="" v-model="uploadData.firmContactsPhone"  @input="saveInputData" />
 						<!-- <text class="uni-icon" v-if="uploadData.firmPriceTransfer" @click="clearIcon">&#xe434;</text> -->
 						<image src="../../static/image/x.png" class="uni-icon" v-if="uploadData.firmContactsPhone" @click="clearIcon('firmContactsPhone')"></image>
 					</view>
@@ -185,11 +185,11 @@
 				<view class="line" >
 					<view class="line-text">
 						转让价格(元)
-						<view >&nbsp*</view>
+						<view >&nbsp</view>
 						：
 					</view>
 					<view class="uni-input" style="display: flex;">
-						<input class="uni-input-item" type="digit" v-model="uploadData.firmPriceTransfer" placeholder="请输入转让价格(元)" />
+						<input class="uni-input-item" type="digit" v-model="uploadData.firmPriceTransfer" placeholder="未填写则表示'面议'" @input="saveInputData" />
 						<!-- <text class="uni-icon" v-if="uploadData.firmPriceTransfer" @click="clearIcon">&#xe434;</text> -->
 						<image src="../../static/image/x.png" class="uni-icon" v-if="uploadData.firmPriceTransfer" @click="clearIcon('firmPriceTransfer')"></image>
 					</view>
@@ -202,8 +202,8 @@
 			<!-- 求购 -->
 			<view v-if="!isTransfer">
 				<view class="row">
-					<view class="title">
-						<view class="scripe"></view>
+					<view class="title" style="background-color: #0088ff;color: black;">
+						<view class="scripe" style="background-color: #ff9300;"></view>
 						公司基本信息
 					</view>
 					
@@ -244,7 +244,7 @@
 							：
 						</view>
 						<view class="uni-input" style="display: flex;">
-							<input class="uni-input-item" placeholder="请输入公司营业范围" v-model="uploadData.firmBusinessScope" @input="clearInput" />
+							<input class="uni-input-item" placeholder="" v-model="uploadData.firmBusinessScope"  @input="saveInputData" />
 							<!-- <text class="uni-icon" v-if="uploadData.firmPriceTransfer" @click="clearIcon">&#xe434;</text> -->
 							<image src="../../static/image/x.png" class="uni-icon" v-if="uploadData.firmBusinessScope" @click="clearIcon('firmBusinessScope')"></image>
 						</view>
@@ -284,19 +284,19 @@
 				</view>
 				
 				<view class="row" style="margin-top: 10px;">
-				<view class="title">
-					<view class="scripe"></view>
+				<view class="title" style="background-color: #0088ff;color: black;">
+					<view class="scripe" style="background-color: #ff9300;"></view>
 					联系人信息
 				</view>
 				<!-- 联系人 -->
-				<view class="line" >
+				<view ref="firmContacts" class="line" >
 					<view class="line-text">
 						联系人
 						<view >&nbsp*</view>
 						：
 					</view>
 					<view class="uni-input" style="display: flex;">
-						<input class="uni-input-item" placeholder="请输入联系人姓名" v-model="uploadData.firmContacts" @input="clearInput" />
+						<input class="uni-input-item" placeholder="" v-model="uploadData.firmContacts"  @input="saveInputData" />
 						<!-- <text class="uni-icon" v-if="uploadData.firmPriceTransfer" @click="clearIcon">&#xe434;</text> -->
 						<image src="../../static/image/x.png" class="uni-icon" v-if="uploadData.firmContacts" @click="clearIcon('firmContacts')"></image>
 					</view>
@@ -304,13 +304,13 @@
 				</view>	
 					
 				<!-- 联系人电话 -->
-				<view class="line" >
+				<view ref="firmContactsPhone" class="line" >
 					<view class="line-text">电话
 						<view >&nbsp*</view>
 						：
 					</view>
 					<view class="uni-input" style="display: flex;">
-						<input class="uni-input-item" placeholder="请输入联系人电话" v-model="uploadData.firmContactsPhone" @input="clearInput" />
+						<input class="uni-input-item" placeholder="" v-model="uploadData.firmContactsPhone"  @input="saveInputData" />
 						<!-- <text class="uni-icon" v-if="uploadData.firmPriceTransfer" @click="clearIcon">&#xe434;</text> -->
 						<image src="../../static/image/x.png" class="uni-icon" v-if="uploadData.firmContactsPhone" @click="clearIcon('firmContactsPhone')"></image>
 					</view>
@@ -319,14 +319,14 @@
 				</view>
 				
 				<!-- 转让价格 -->
-				<view class="line" >
+				<view  class="line" >
 					<view class="line-text">
 						转让价格(元)
-						<view >&nbsp*</view>
+						<view >&nbsp</view>
 						：
 					</view>
 					<view class="uni-input" style="display: flex;">
-						<input class="uni-input-item" type="digit" v-model="uploadData.firmPriceTransfer" placeholder="请输入转让价格(元)" />
+						<input class="uni-input-item" type="digit" v-model="uploadData.firmPriceTransfer" placeholder="未填写则表示'面议'" @input="saveInputData" />
 						<!-- <text class="uni-icon" v-if="uploadData.firmPriceTransfer" @click="clearIcon">&#xe434;</text> -->
 						<image src="../../static/image/x.png" class="uni-icon" v-if="uploadData.firmPriceTransfer" @click="clearIcon('firmPriceTransfer')"></image>
 					</view>
@@ -338,9 +338,13 @@
 			
 			<!-- 发布按钮 -->
 			<view class="bottom">
+				<button class="bottom-btn" @click="saveDataFun">
+					暂存
+				</button>
 				<button class="bottom-btn" @click="publishClick">
 					我要发布
 				</button>
+				
 			</view>
 			
 		
@@ -349,7 +353,7 @@
 </template>
 
 <script>
-	import config from "@/config/config.js"
+	import config from "@/config/config.js";
 	export default {
 		data() {
 			return {
@@ -379,6 +383,9 @@
 				// 日期
 				dateIndex:0,
 				
+				// 延时函数
+				saveFun:null,
+				
 				// 数据
 				uploadData:{
 					firmName:'',
@@ -393,7 +400,18 @@
 					firmContactsPhone:'',
 					firmPriceTransfer:'',
 					firmRegistCapital:''
-				}
+				},
+				// 求购
+				purchaseData: {
+					firmSectorType:'',
+					firmLocation:'',
+					firmTaxableType:'',
+					firmEstablishDate:'',
+					firmBusinessScope:'',
+					firmContacts:'',
+					firmContactsPhone:'',
+					firmPriceTransfer:'',
+				},
 			}
 		},
 		onReady() {
@@ -401,19 +419,78 @@
 				title: '我要发布'
 			});
 		},
-		
+		created() {
+		},
 		
 		onLoad() {
 			let that = this;
-			
+			uni.getStorage({						// 如果有缓存则读缓存
+				key:'uploadData-temp-transfer',
+				success(res) {
+					that.uploadData = res.data;
+				}
+			})
 			that.init();
 		},
 		methods: {
+			
+			// 保存按钮
+			saveDataFun(){
+				this.handleSaveTemp();
+				uni.showModal({
+					content:"保存成功！"
+				})
+			},
+			
+			// 清除输入框按键
+			clearIcon:function(test){
+				if(this.uploadData.hasOwnProperty(test)){
+					console.log("存在",this.uploadData[test]);
+					this.uploadData[test] = '';
+				}else {
+					console.log("不存在");
+				}
+			},
+			
+			/**
+			  * @title 检测输入框输入
+			  * @desc 输入框输入时，创建一个2s的延时函数，用于保存已填数据，若2s内继续填写数据，则替换掉原来的缓存。
+			  */
+			saveInputData(){
+				if (this.saveFun) {
+				        clearTimeout(this.saveFun);
+				      }
+				      this.saveFun = setTimeout(() => {
+				        this.handleSaveTemp();
+				      }, 2000); // 1500 毫秒延迟
+			},
+			handleSaveTemp(){
+				let that = this;
+				console.log("进行保存");
+				let tempkey = '';
+				if(that.isTransfer){
+					tempkey = 'uploadData-temp-transfer';
+				}else{
+					tempkey = 'uploadData-temp-purchase';
+				}
+				uni.setStorage({
+					key: tempkey,
+					data: that.uploadData,
+					success() {
+						console.log("将表格数据存入缓存！");
+					}
+				})
+				
+			},
+			
+			
 			// 点击切换转让或求购页面
 			changeSelect:function(str){
+				let that = this;
+				let tempkey = '';
 				if(str == 'transfer'){
 					if(this.isTransfer != 1){
-						
+						tempkey = 'uploadData-temp-transfer';
 						this.isTransfer = 1;
 						this.sectorsData.shift();
 						this.yearData.shift();
@@ -426,15 +503,21 @@
 						this.multiArrary[1] = this.cities[0];
 						this.multiArrary[2] = this.districts[0][0];
 						
+						console.log();
 						this.sectorsIndex = 0;
 						this.taxableIndex = 0;
 						this.yearIndex = 0;
 						this.multiIndex = [0,0,0];
 						
+						Object.keys(this.uploadData).forEach(key => {
+						  this.uploadData[key] = '';
+						});
+						
 					}
 				}
 				if(str == 'purchase'){
 					if(this.isTransfer != 0){
+						tempkey = 'uploadData-temp-purchase';
 						this.isTransfer = 0;
 						this.sectorsData.unshift('全部');
 						this.yearData.unshift('全部');
@@ -451,21 +534,156 @@
 						this.taxableIndex = 0;
 						this.yearIndex = 0;
 						this.multiIndex = [0,0,0];
+						Object.keys(this.uploadData).forEach(key => {
+						  this.uploadData[key] = '';
+						});
 					}
-					
 				}
+				
+				uni.getStorage({						// 如果有缓存则读缓存
+					key:tempkey,
+					success(res) {
+						that.uploadData = res.data;
+					}
+				})
 				
 			},
 			
-			// 清除输入框按键
-			clearIcon:function(test){
-				if(this.uploadData.hasOwnProperty(test)){
-					console.log("存在",this.uploadData[test]);
-					this.uploadData[test] = '';
-				}else {
-					console.log("不存在");
+			
+			
+			/**
+			  * @title 发布按钮执行函数
+			  * @desc 上传到接口upload/addFirmInfo，
+			  * 
+			  * */
+			publishClick:function(){
+				let that = this;
+				let typeUrl = '';
+				let uploadData = '';
+				if(!that.isTransfer){
+					typeUrl = 'addFirmPurchase';
+					
+					that.purchaseData = Object.keys(that.purchaseData).reduce((acc, key) => {
+					    if (that.uploadData.hasOwnProperty(key)) {
+					        acc[key] = that.uploadData[key];
+					    }
+					    return acc;
+					}, {});
+					
+					uploadData = that.purchaseData
+					console.log("赋值结束：",that.purchaseData);
+				}else{
+					typeUrl = 'addFirmInfo';
+					uploadData = that.uploadData;
 				}
+				uni.showLoading({
+					title:'请等待',
+					mask:true,
+				})
+				
+				
+				let tempRuslt = that.checkInput();				// 填写必填项
+				if( tempRuslt != ''){
+					uni.showModal({
+						content:'请填写必填项：'+tempRuslt
+					})
+					uni.hideLoading();
+					return ;
+				}
+				
+				if(uploadData.firmContactsPhone.length != 11){		// 正确手机号
+					uni.showModal({
+						content:'请输入正确的手机号！'
+					})
+					uni.hideLoading();
+					return ;
+				}
+				
+				console.log("upload: ",this.uploadData);
+				uni.request({
+					url:config.upload + typeUrl,
+					method:'POST',
+					data: uploadData,
+					dataType:'application/json',
+					success(res) {
+						if(res.statusCode == 200){
+							
+							let tempkey = '';
+							that.saveFun = '';
+							if(that.isTransfer){
+								tempkey = 'uploadData-temp-transfer';
+							}else{
+								tempkey = 'uploadData-temp-purchase';
+							}
+							uni.removeStorage({
+								key:tempkey
+							});
+							
+							uni.showModal({
+								content:'提交成功！',
+								success() {
+									that.uploadData = [];
+									uni.reLaunch({
+										url:'/pages/index/index'
+									})
+								}
+							})
+							
+							
+						}else{
+							uni.showModal({
+								content:'提交失败！',
+							})
+						}
+						
+					},fail() {
+						uni.showModal({
+							content:'提交失败！',
+						})
+					},complete() {
+						uni.hideLoading();
+					}
+				})
+				
 			},
+			
+			/**
+			  * @title 判断是否填写必选项
+			  * @desc 判断必选项是否填写，若未填写则跳转到相应位置
+			  * 
+			  * */
+			checkInput(){
+				let that = this;
+				let ret = '';
+				if(that.isTransfer){
+					if(that.uploadData.firmName == ''){
+						ret += '公司名称、';
+					}
+					if(that.uploadData.firmSectorType == ''){
+						ret += '行业类型、';
+					}
+					if(that.uploadData.firmLocation == ''){
+						ret += '注册地址、';
+					}
+					if(that.uploadData.firmRegistCapital == ''){
+						ret += '注册资本、';
+					}
+					if(that.uploadData.firmTaxableType == ''){
+						ret += '纳税性质、';
+					}
+					if(that.uploadData.firmEstablishDate == ''){
+						ret += '注册时间、';
+					}
+				}
+				if(that.uploadData.firmContacts == ''){
+					ret += '联系人、';
+				}
+				if(that.uploadData.firmContactsPhone == ''){
+					ret += '电话、';
+				}
+				return ret;
+			},
+			
 			
 			/**
 			 * @desc 数据初始化，从缓存中获取配置信息。从后端获取公司详情
@@ -498,16 +716,16 @@
 						that.multiArrary[0] = that.provinces;
 						that.multiArrary[1] = that.cities[0];
 						that.multiArrary[2] = that.districts[0][0];
-						that.uploadData.firmLocation = that.provinces[0] + "-" + that.cities[0][0] + "-" + that.districts[0][0][0] ;
+						// that.uploadData.firmLocation = that.provinces[0] + "-" + that.cities[0][0] + "-" + that.districts[0][0][0] ;
 					},
 					fail:function(res){
 						console.log("获取缓存失败，重新拉取数据!",res);
 						that.uploadAreaData();
 					}
 				})
-				that.uploadData.firmSectorType = that.sectorsData[that.sectorsIndex];
-				that.uploadData.firmTaxableType = that.taxableData[that.taxableIndex];
-				that.uploadData.firmEstablishDate = that.yearData[that.yearIndex];
+				// that.uploadData.firmSectorType = that.sectorsData[that.sectorsIndex];
+				// that.uploadData.firmTaxableType = that.taxableData[that.taxableIndex];
+				// that.uploadData.firmEstablishDate = that.yearData[that.yearIndex];
 			},
 			
 			// 选择器改变触发函数
@@ -517,6 +735,7 @@
 				const value = e.detail.value;
 				that.multiIndex[column] = value;
 				console.log('修改的列为：' + e.detail.column + '，值为：' + e.detail.value)
+				console.log(that.provinces,that.districts,that.cities);
 				switch(column){
 					case 0:{
 						that.multiIndex[1] = 0;
@@ -542,7 +761,7 @@
 				let that = this;
 				if(str === 'multiArrary'){
 					const value = e.detail.value;
-					if(value[0]=='0'){
+					if(value[0]=='0' && !that.isTransfer){
 						that.uploadData.firmLocation = '全部';
 						return;
 					}
@@ -574,44 +793,6 @@
 				}
 			},
 			
-			/**
-			  * @title 发布按钮执行函数
-			  * @desc 上传到接口upload/addFirmInfo，
-			  * 
-			  * */
-			publishClick:function(){
-				let that = this;
-				uni.showLoading({
-					title:'请等待',
-					mask:true,
-				})
-				console.log("upload: ",this.uploadData);
-				uni.request({
-					url:config.upload + 'addFirmInfo',
-					method:'POST',
-					data:that.uploadData,
-					dataType:'application/json',
-					success(res) {
-						if(res.statusCode == 200){
-							uni.showModal({
-								content:'提交成功！',
-							})
-						}else{
-							uni.showModal({
-								content:'上传失败！',
-							})
-						}
-						
-					},fail() {
-						uni.showModal({
-							content:'上传失败！',
-						})
-					},complete() {
-						uni.hideLoading();
-					}
-				})
-				
-			},
 			
 			/**
 			  * @title 地区文件读取
@@ -865,11 +1046,15 @@
 	
 	.bottom{
 		padding: 20px 0;
+		display: flex;
+		flex-direction: row;
+		justify-content: space-around;
 	}
 	.bottom-btn{
 		/* padding: 0 50px; */
-		margin: 0 50px;
-		background-color: #5d73d9;
+		margin: 0 8%;
+		width: 40%;
+		background-color: #cbc9c9;
 	}
 
 </style>

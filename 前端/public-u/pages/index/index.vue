@@ -121,11 +121,11 @@
 					
 					<!-- 底部售价，发布等信息 -->
 					<view class="firms-item firms-item-bottom">
-						<view v-if="isTransfer">
-							售价：{{ item.firmPriceTransfer }} 元
+						<view v-if="isTransfer ">
+							售价：{{ item.firmPriceTransfer ?  item.firmPriceTransfer + ' 元' : '面议' }}
 						</view>
 						<view v-else>
-							求购：{{ item.firmPriceTransfer }} 元
+							求购：{{ item.firmPriceTransfer ?  item.firmPriceTransfer + ' 元' : '面议' }}
 						</view>
 						
 						<view>
@@ -266,8 +266,9 @@
 			
 			// 点击进入详情
 			firmClick:function(index){
+				let that = this;
 				uni.navigateTo({
-					url:'/pages/index/detail?id='+index
+					url:'/pages/index/detail?id='+index+'&type='+that.isTransfer
 				})
 				
 			},
@@ -279,6 +280,11 @@
 				}else if(str == 'purchase'){
 					this.isTransfer = 0;
 				}
+				// 先清空数据
+				this.page = 1;
+				this.firmsData = [];
+				this.isloading = 0;
+				this.uploadFirmsInfo();
 			},
 			
 			
@@ -356,6 +362,13 @@
 			 */
 			uploadFirmsInfo:function(){
 				let that = this;
+				let typeUrl = '';
+				// 如果type为1，则是转让，为0则是求购
+				if(that.isTransfer){
+					typeUrl = 'firmShowInfo';
+				}else{
+					typeUrl = 'firmShowPurchase';
+				}
 				var sector = that.sectorsData[that.sectorsData_index];
 				var taxable = that.taxableData[that.taxableData_index];
 				var year = that.yearData[that.yearData_index];
@@ -370,7 +383,7 @@
 					location = '';
 				
 				uni.request({
-					url:config.domain + 'firmShowInfo',
+					url:config.domain + typeUrl,
 					header: {  
 						'Content-Type': 'application/x-www-form-urlencoded'  
 					}, 
@@ -385,7 +398,7 @@
 					method:'POST',
 					success(res) {
 						console.log("获取公司数据",res.data);
-						if(res.data.length == 0)
+						if(res.data.length < that.size)
 							that.isloading = 1;
 						for(var i=0; i<res.data.length; i++){
 							that.firmsData.push(res.data[i]);

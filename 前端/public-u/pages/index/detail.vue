@@ -18,13 +18,17 @@
 			
 			<!-- 公司详情 -->
 			<view class="row" >
-				<view class="title">
+				<view v-if="firmData.hasOwnProperty('firmName')" class="title">
 					<view class="scripe"></view>
 					公司基本信息
 				</view>
+				<view v-else class="title">
+					<view class="scripe"></view>
+					意向公司信息
+				</view>
 				
 				<!-- 公司名称 -->
-				<view class="line" style="display: flex;">
+				<view v-if="firmData.hasOwnProperty('firmName')"  class="line" style="display: flex;">
 					<view class="line-text" >
 						公司名称：
 					</view>
@@ -32,7 +36,7 @@
 				</view>
 				
 			<!-- 行业选择 -->
-				<view class="line">
+				<view  v-if="firmData.hasOwnProperty('firmSectorType')"  class="line">
 					<view class="line-text">行业：
 					</view>
 					
@@ -42,7 +46,7 @@
 				
 				
 				<!-- 地区选择器 -->
-				<view class="line">
+				<view  v-if="firmData.hasOwnProperty('firmLocation')"  class="line">
 					<view class="line-text">
 						注册地址：
 					</view>
@@ -51,7 +55,7 @@
 				</view>	
 				
 				<!-- 详细地址选择 -->
-				<view class="line">
+				<view  v-if="firmData.hasOwnProperty('firmLocationDetail')"  class="line">
 					<view class="line-text">
 						详细地址：
 					</view>
@@ -61,7 +65,7 @@
 				
 				
 				<!-- 注册资本 -->
-				<view class="line" style="display: flex;">
+				<view  v-if="firmData.hasOwnProperty('firmRegistCapital')"  class="line" style="display: flex;">
 					<view class="line-text">
 						注册资本：
 					</view>
@@ -70,7 +74,7 @@
 				</view>
 				
 				<!-- 营业范围 -->
-				<view class="line" >
+				<view  v-if="firmData.hasOwnProperty('firmBusinessScope')"  class="line" >
 					<view class="line-text">
 						营业范围：
 					</view>
@@ -80,7 +84,7 @@
 				
 				
 				<!-- 纳税性质 -->
-				<view class="line">
+				<view  v-if="firmData.hasOwnProperty('firmTaxableType')"  class="line">
 					<view class="line-text">
 						纳税性质：
 					</view>
@@ -88,7 +92,7 @@
 				</view>
 				
 				<!-- 注册时间 -->
-				<view class="line" >
+				<view  v-if="firmData.hasOwnProperty('firmEstablishDate')"  class="line" >
 					<view class="line-text"> 
 						注册时间：
 					</view>
@@ -97,12 +101,13 @@
 				</view>
 				
 				<!-- 归属税局 -->
-				<view class="line" style="margin-bottom: 10px;">
+				<view  v-if="firmData.hasOwnProperty('firmTaxBelong')"  class="line">
 					<view class="line-text">
 						归属税局：
 					</view>
 					<view class="uni-input" >{{ firmData.firmTaxBelong }}</view>
 				</view>
+				<view  style="margin-bottom: 10px;"></view>
 			</view>
 			
 			<view class="row" style="margin-top: 10px;">
@@ -111,7 +116,7 @@
 					联系人信息
 				</view>
 				<!-- 联系人 -->
-				<view class="line" >
+				<view  v-if="firmData.hasOwnProperty('firmContacts')"  class="line" >
 					<view class="line-text">
 						联系人：
 					</view>
@@ -120,7 +125,7 @@
 				</view>	
 					
 				<!-- 联系人电话 -->
-				<view class="line" >
+				<view  v-if="firmData.hasOwnProperty('firmContactsPhone')"  class="line" >
 					<view class="line-text">
 						电话：
 					</view>
@@ -128,11 +133,15 @@
 								
 				</view>
 				
-				<view class="line" >
-					<view class="line-text">
+				<view  v-if="firmData.hasOwnProperty('firmPriceTransfer')"  class="line" >
+					<view v-if="firmData.hasOwnProperty('firmName')" class="line-text">
 						售价：
 					</view>
-					<view class="uni-input" >{{ firmData.firmPriceTransfer }} 元</view>					
+					<view v-else class="line-text">
+						求购价：
+					</view>
+					<view v-if="firmData.firmPriceTransfer" class="uni-input" >{{ firmData.firmPriceTransfer }} 元</view>	
+					<view v-else class="uni-input" >面议</view>
 				</view>
 				
 				<!-- 空白占位 -->
@@ -172,7 +181,7 @@
 		},
 		onLoad(option) {
 			console.log("option:",option);
-			this.firmsInit(option.id);
+			this.firmsInit(option.id,option.type);
 			
 		
 		},
@@ -185,10 +194,18 @@
 			/*
 			 * @desc 从服务器获取公司数据，并处理数据。
 			 */
-			firmsInit:function(id){
+			firmsInit:function(id,type){
+				console.log("id:",id);
 				let that = this;
+				let typeUrl = '';
+				// 如果type为1，则是转让，为0则是求购
+				if(type == 1){
+					typeUrl = 'firmInfoItem';
+				}else{
+					typeUrl = 'firmPurchaseItem';
+				}
 				uni.request({
-					url:config.domain + 'firmInfoItem',
+					url:config.domain + typeUrl,
 					header: {  
 						'Content-Type': 'application/x-www-form-urlencoded'  
 					}, 
