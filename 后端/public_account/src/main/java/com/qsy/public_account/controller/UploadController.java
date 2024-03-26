@@ -1,11 +1,11 @@
 package com.qsy.public_account.controller;
 
 import com.qsy.public_account.common.Result;
-import com.qsy.public_account.entity.FirmInfo;
-import com.qsy.public_account.entity.FirmRecive;
+import com.qsy.public_account.entity.*;
 
-import com.qsy.public_account.entity.FirmShow;
 import com.qsy.public_account.service.impl.FirmImpl;
+import com.qsy.public_account.service.impl.FirmPurchaseServiceImpl;
+import com.qsy.public_account.service.impl.FirmShowPurchaseServiceImpl;
 import com.qsy.public_account.service.impl.FirmShowServiceImpl;
 import com.qsy.public_account.utils.RecToEntity;
 import jakarta.annotation.Resource;
@@ -29,6 +29,10 @@ public class UploadController {
     private FirmImpl firmservice;
     @Resource
     private FirmShowServiceImpl showService;
+    @Resource
+    private FirmShowPurchaseServiceImpl showPurchaseSevice;
+    @Resource
+    private FirmPurchaseServiceImpl firmPurchaseService;
 
     private static final Logger logger = LogManager.getLogger(UploadController.class);
 
@@ -50,6 +54,8 @@ public class UploadController {
 
         if (firmservice.addFirmInfo(info)){
             RecToEntity.firmTransfer(info, firmshow);
+            // 1表示转让类型
+
             if(showService.addFirmShow(firmshow)){
                 rs.setCode(200);
                 rs.setMsg("添加成功");
@@ -72,7 +78,7 @@ public class UploadController {
     }
 
     /**
-     * @desc 修改信息
+     * @desc 修改公司详情信息
      *
      */
     @PostMapping("/modifyFirmInfo")
@@ -101,5 +107,47 @@ public class UploadController {
 
         return rs;
     }
+
+
+    /**
+     * @desc 上传求购公司信息
+     * @param recive
+     * @return true or false
+     * */
+    @PostMapping("/addFirmPurchase")
+    @ResponseBody
+    public Result<Boolean> uploadFirmPurchase(@RequestBody FimrRecivePurchase recive)  {
+        logger.info("接收到api请求 : /upload/addFirmInfo;");
+        Result<Boolean> rs = new Result<>();
+        FirmPurchase purchase = new FirmPurchase();
+        RecToEntity.firmTransfer(recive, purchase);
+        FirmShowPurchase firmshow = new FirmShowPurchase();
+        purchase.setCreateTime(new Date());
+        purchase.setFirmStatusTransfer(0);
+
+        if (firmPurchaseService.addFirmPurchase(purchase)){
+            RecToEntity.firmTransfer(purchase, firmshow);
+            // 0表示求购类型
+            if(showPurchaseSevice.addFirmShow(firmshow)){
+                rs.setCode(200);
+                rs.setMsg("添加成功");
+                rs.setData(true);
+            }else{
+                rs.setCode(500);
+                rs.setMsg("插入失败");
+                rs.setData(false);
+            }
+        }else{
+            rs.setCode(500);
+            rs.setMsg("插入失败");
+            rs.setData(false);
+        }
+//      添加创建时间
+
+
+
+        return rs;
+    }
+
 
 }

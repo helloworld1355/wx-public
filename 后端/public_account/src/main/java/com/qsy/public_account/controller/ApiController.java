@@ -2,12 +2,8 @@ package com.qsy.public_account.controller;
 
 
 import com.qsy.public_account.common.Result;
-import com.qsy.public_account.entity.FirmInfo;
-import com.qsy.public_account.entity.FirmShow;
-import com.qsy.public_account.entity.InitConfig;
-import com.qsy.public_account.service.impl.FirmImpl;
-import com.qsy.public_account.service.impl.FirmShowServiceImpl;
-import com.qsy.public_account.service.impl.InitConfigServiceImpl;
+import com.qsy.public_account.entity.*;
+import com.qsy.public_account.service.impl.*;
 import jakarta.annotation.Resource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -35,6 +31,9 @@ public class ApiController {
     @Resource
     private FirmShowServiceImpl firmshowimpl;
     @Resource
+    private FirmShowPurchaseServiceImpl firmPurchaseShowService;
+    @Resource FirmPurchaseServiceImpl firmPurchaseService;
+    @Resource
     private InitConfigServiceImpl configimpl;
 
 
@@ -51,6 +50,18 @@ public class ApiController {
         return list;
     }
 
+    /**
+     * @desc 获取展示首页求购公司信息
+     * */
+    @ResponseBody
+    @PostMapping("/firmShowPurchase")
+    public List<FirmShowPurchase> firmPurchaseList(Integer page, Integer size, String location, String year, String sector, String taxable){
+        logger.info("接收到api请求 : /api/FirmShowPurchase;");
+        System.out.println("location::"+location+"  year::"+year+"  sector::"+sector+"  taxable::"+taxable);
+        List<FirmShowPurchase> list = firmPurchaseShowService.getFirmInfoList(page,size,location,year,sector,taxable);
+        System.out.println("list::"+list);
+        return list;
+    }
     /**
      * @desc 获取选项列表
      * */
@@ -80,5 +91,24 @@ public class ApiController {
         return rs;
     }
 
+    /**
+     * @desc 通过id获取单个求购公司数据
+     * */
+    @ResponseBody
+    @PostMapping("/firmPurchaseItem")
+    public Result<FirmPurchase> firmPurchaseItem(Integer id){
+        Result<FirmPurchase> rs = new Result<>();
+        logger.info("接收到api请求 : /api/FirmPurchase;"+id);
+        rs.setData(firmPurchaseService.getFirmPurchaseItem(id));
+        System.out.println("rs = "+rs);
+        if(rs.getData()== null){
+            rs.setCode(500);
+            rs.setMsg("查询失败！");
+        }else {
+            rs.setCode(200);
+            rs.setMsg("查询成功！");
+        }
+        return rs;
+    }
 
 }
