@@ -1,6 +1,7 @@
 package com.qsy.public_account.service;
 
 
+import com.qsy.public_account.entity.FirmInfo;
 import com.qsy.public_account.entity.FirmShow;
 
 import java.util.List;
@@ -19,4 +20,6 @@ public interface IFirmShowService {
     public boolean updateFirmShow(FirmShow firmInfo);
     public List<FirmShow> getFirmInfoList(int page, int size, String location, String year, String sector, String taxable);
 
+
+    List<FirmShow> getMyFirmInfoList(List<Integer> idlist);
 }

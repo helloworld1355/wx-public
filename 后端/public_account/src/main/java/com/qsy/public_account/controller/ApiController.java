@@ -1,15 +1,24 @@
 package com.qsy.public_account.controller;
 
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.google.gson.Gson;
 import com.qsy.public_account.common.Result;
 import com.qsy.public_account.entity.*;
 import com.qsy.public_account.service.impl.*;
+import com.qsy.public_account.utils.HttpTemplate;
 import jakarta.annotation.Resource;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.http.HttpRequest;
 import java.util.List;
 
 
@@ -35,6 +44,11 @@ public class ApiController {
     @Resource FirmPurchaseServiceImpl firmPurchaseService;
     @Resource
     private InitConfigServiceImpl configimpl;
+
+    @Value("${auth.appid}")
+    String appid;
+    @Value("${auth.secret}")
+    String secret;
 
 
     /**
@@ -109,6 +123,58 @@ public class ApiController {
             rs.setMsg("查询成功！");
         }
         return rs;
+    }
+
+    /** @desc 通过id列表查询数据
+     * */
+    @ResponseBody
+    @PostMapping("/myFirmInfoList")
+    public Result<FirmInfo> getMyFirmInfoList(List<Integer> idlist){
+        Result<FirmInfo> rs = new Result<>();
+        logger.info("接收到api请求 : /api/myFirmInfoList;"+idlist);
+        rs.setMsg("成功！");
+        rs.setCode(200);
+        rs.setData(firmshowimpl.getMyFirmInfoList(idlist));
+        return rs;
+    }
+
+    @ResponseBody
+    @PostMapping("/myFirmPurchaseList")
+    public Result<FirmPurchase> getMyFirmPurchaseList(List<Integer> idlist){
+        Result<FirmPurchase> rs = new Result<>();
+        logger.info("接收到api请求 : /api/myFirmInfoList;");
+        rs.setMsg("成功！");
+        rs.setCode(200);
+        rs.setData(firmPurchaseShowService.getMyFirmInfoList(idlist));
+        return rs;
+    }
+
+
+    /** @desc 前端发起请求拉取微信登录，经过处理获取微信用户数据
+     * @param code 接收code
+     *
+     * */
+    @ResponseBody
+    @GetMapping("/login")
+    public void wxH5(@RequestParam("code") String code){
+        System.out.println("code ::: "+code);
+//        发送请求
+        String temp_token = HttpTemplate.httpGet("https://api.weixin.qq.com/sns/oauth2/access_token?"
+                + "appid="+ appid
+                + "&secret="+secret
+                + "&code="+code
+                + "&grant_type=authorization_code");
+        // 使用 Gson 解析 JSON 字符串为 Token 对象
+        Gson gson = new Gson();
+        Token token = gson.fromJson(temp_token, Token.class);
+        System.out.println("temp_token ::"+temp_token);
+        System.out.println("token ::: "+token);
+
+        // 获取用户信息
+        System.out.println("getopenid::"+token.getOpenid());
+        String user = HttpTemplate.httpGet("https://api.weixin.qq.com/sns/userinfo?" +
+                "access_token=" + token.getAccess_token() +"&openid="+token.getOpenid()+"&lang=zh_CN");
+        System.out.println("user ::: "+user);
     }
 
 }

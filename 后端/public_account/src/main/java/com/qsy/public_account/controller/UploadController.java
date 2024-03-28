@@ -43,9 +43,9 @@ public class UploadController {
      * */
     @PostMapping("/addFirmInfo")
     @ResponseBody
-    public Result<Boolean> uploadFirmInfo(@RequestBody FirmRecive recive)  {
+    public Result<Integer> uploadFirmInfo(@RequestBody FirmRecive recive)  {
         logger.info("接收到api请求 : /upload/addFirmInfo;");
-        Result<Boolean> rs = new Result<>();
+        Result<Integer> rs = new Result<>();
         FirmInfo info = new FirmInfo();
         RecToEntity.firmTransfer(recive, info);
         FirmShow firmshow = new FirmShow();
@@ -59,7 +59,7 @@ public class UploadController {
             if(showService.addFirmShow(firmshow)){
                 rs.setCode(200);
                 rs.setMsg("添加成功");
-                rs.setData(true);
+                rs.setData(firmshow.getId());
             }else{
                 rs.setCode(500);
                 rs.setMsg("插入失败");
@@ -68,7 +68,7 @@ public class UploadController {
         }else{
             rs.setCode(500);
             rs.setMsg("插入失败");
-            rs.setData(false);
+            rs.setData(-1);
         }
 //      添加创建时间
 
@@ -116,9 +116,9 @@ public class UploadController {
      * */
     @PostMapping("/addFirmPurchase")
     @ResponseBody
-    public Result<Boolean> uploadFirmPurchase(@RequestBody FimrRecivePurchase recive)  {
+    public Result<Integer> uploadFirmPurchase(@RequestBody FimrRecivePurchase recive)  {
         logger.info("接收到api请求 : /upload/addFirmInfo;");
-        Result<Boolean> rs = new Result<>();
+        Result<Integer> rs = new Result<>();
         FirmPurchase purchase = new FirmPurchase();
         RecToEntity.firmTransfer(recive, purchase);
         FirmShowPurchase firmshow = new FirmShowPurchase();
@@ -131,16 +131,16 @@ public class UploadController {
             if(showPurchaseSevice.addFirmShow(firmshow)){
                 rs.setCode(200);
                 rs.setMsg("添加成功");
-                rs.setData(true);
+                rs.setData(firmshow.getId());
             }else{
                 rs.setCode(500);
                 rs.setMsg("插入失败");
-                rs.setData(false);
+                rs.setData(-1);
             }
         }else{
             rs.setCode(500);
             rs.setMsg("插入失败");
-            rs.setData(false);
+            rs.setData(-1);
         }
 //      添加创建时间
 

@@ -93,4 +93,18 @@ public class FirmShowPurchaseServiceImpl implements IFirmShowPurchaseService {
         list = resultPage.getRecords();
         return list;
     }
+
+    /** @author qsy
+     * @date 2023/03/28
+     * @desc 通过id列表获取发布的公司列表
+     * @return 返回展示列表
+     * */
+    @Override
+    public List<FirmShowPurchase> getMyFirmInfoList(List<Integer> idlist){
+        QueryWrapper<FirmShowPurchase> wrapper = new QueryWrapper<>();
+        wrapper.in("id",idlist);
+        return firmShowPurchaseMapper.selectList(wrapper);
+
+    }
+
 }
