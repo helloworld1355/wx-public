@@ -431,6 +431,7 @@
 				}
 			})
 			that.init();
+			
 		},
 		methods: {
 			
@@ -560,6 +561,7 @@
 				let that = this;
 				let typeUrl = '';
 				let uploadData = '';
+				
 				if(!that.isTransfer){
 					typeUrl = 'addFirmPurchase';
 					
@@ -606,6 +608,7 @@
 					data: uploadData,
 					dataType:'application/json',
 					success(res) {
+						console.log("request res :",res.data);
 						if(res.statusCode == 200){
 							
 							let tempkey = '';

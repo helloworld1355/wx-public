@@ -27,6 +27,24 @@
 				"titleNView": false
 		    }
 		    
+		},
+		{
+			"path" : "pages/my/my",
+			"style" : 
+			{
+				// "navigationBarTitleText" : "",
+				"titleNView": false,
+				"enablePullDownRefresh" : false
+			}
+		},
+		{
+			"path" : "pages/my/mypublish",
+			"style" : 
+			{
+				// "navigationBarTitleText" : "",
+				"titleNView": false,
+				"enablePullDownRefresh" : false
+			}
 		}
        
     ],
@@ -44,7 +62,12 @@
 			{
 				"pagePath": "pages/publish/publish",
 				"text": "我要发布"
+			},
+			{
+				"pagePath": "pages/my/my",
+				"text": "我的"
 			}
+			
 		]
 	},
 	"globalStyle": {
