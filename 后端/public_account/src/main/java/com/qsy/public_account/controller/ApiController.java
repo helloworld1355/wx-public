@@ -19,6 +19,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.http.HttpRequest;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -91,7 +92,7 @@ public class ApiController {
      * */
     @ResponseBody
     @PostMapping("/firmInfoItem")
-    public Result<FirmInfo> firmInfoItem(Integer id){
+    public Result<FirmInfo> firmInfoItem(@RequestBody Integer id){
         Result<FirmInfo> rs = new Result<>();
         logger.info("接收到api请求 : /api/firmInfoItem;");
         rs.setData(firmimpl.getFirmInfoItem(id));
@@ -110,7 +111,7 @@ public class ApiController {
      * */
     @ResponseBody
     @PostMapping("/firmPurchaseItem")
-    public Result<FirmPurchase> firmPurchaseItem(Integer id){
+    public Result<FirmPurchase> firmPurchaseItem(@RequestBody Integer id){
         Result<FirmPurchase> rs = new Result<>();
         logger.info("接收到api请求 : /api/FirmPurchase;"+id);
         rs.setData(firmPurchaseService.getFirmPurchaseItem(id));
@@ -129,7 +130,7 @@ public class ApiController {
      * */
     @ResponseBody
     @PostMapping("/myFirmInfoList")
-    public Result<FirmInfo> getMyFirmInfoList(List<Integer> idlist){
+    public Result<FirmInfo> getMyFirmInfoList(@RequestBody List<Integer> idlist){
         Result<FirmInfo> rs = new Result<>();
         logger.info("接收到api请求 : /api/myFirmInfoList;"+idlist);
         rs.setMsg("成功！");
@@ -140,9 +141,9 @@ public class ApiController {
 
     @ResponseBody
     @PostMapping("/myFirmPurchaseList")
-    public Result<FirmPurchase> getMyFirmPurchaseList(List<Integer> idlist){
+    public Result<FirmPurchase> getMyFirmPurchaseList(@RequestBody List<Integer> idlist){
         Result<FirmPurchase> rs = new Result<>();
-        logger.info("接收到api请求 : /api/myFirmInfoList;");
+        logger.info("接收到api请求 : /api/myFirmPurchaseList;");
         rs.setMsg("成功！");
         rs.setCode(200);
         rs.setData(firmPurchaseShowService.getMyFirmInfoList(idlist));

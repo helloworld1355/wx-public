@@ -21,6 +21,7 @@ public interface IFirmPurchaseService  {
 
     //    修改信息
     boolean updateFirmPurchase(FirmPurchase firmInfo);
+    boolean deleteFirmPurchase(Integer id);
 
     //      获取信息
     List<FirmPurchase> getFirmPurchaseList(int page, int size);

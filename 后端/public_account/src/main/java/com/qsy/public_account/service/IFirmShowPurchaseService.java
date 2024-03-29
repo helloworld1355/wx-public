@@ -18,6 +18,7 @@ public interface IFirmShowPurchaseService  {
 
     public boolean addFirmShow(FirmShowPurchase firmInfo);
     public boolean updateFirmShow(FirmShowPurchase firmInfo);
+    boolean deleteFirmShowPurchase(Integer id);
     public List<FirmShowPurchase> getFirmInfoList(int page, int size, String location, String year, String sector, String taxable);
 
     public List<FirmShowPurchase> getMyFirmInfoList(List<Integer> idlist);

@@ -68,6 +68,17 @@ public class FirmPurchaseServiceImpl  implements IFirmPurchaseService {
         }
     }
 
+    @Override
+    public boolean deleteFirmPurchase(Integer id){
+        int ret = firmInfoMapper.deleteById(id);
+        if (ret > 0){
+            logger.info("删除成功！");
+            return true;
+        }else{
+            return false;
+        }
+    }
+
 
     /**
      * @desc 分页查询公司信息

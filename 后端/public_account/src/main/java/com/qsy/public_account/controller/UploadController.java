@@ -70,10 +70,6 @@ public class UploadController {
             rs.setMsg("插入失败");
             rs.setData(-1);
         }
-//      添加创建时间
-
-
-
         return rs;
     }
 
@@ -142,12 +138,84 @@ public class UploadController {
             rs.setMsg("插入失败");
             rs.setData(-1);
         }
-//      添加创建时间
+        return rs;
+    }
 
 
+    @PostMapping("/deleteFirmInfo")
+    @ResponseBody
+    public Result<Boolean> deleteFirmInfo(@RequestBody Integer id)  {
+        logger.info("接收到api请求 : /upload/deleteFirmInfo;");
+        Result<Boolean> rs = new Result<>();
+        boolean ret = firmPurchaseService.deleteFirmPurchase(id);
+        showService.deleteFirmShow(id);
+        if(ret){
+            rs.setData(ret);
+            rs.setCode(200);
+            rs.setMsg("删除成功！");
+        }else{
+            rs.setData(ret);
+            rs.setCode(500);
+            rs.setMsg("删除失败！");
+        }
+        return rs;
+    }
+
+
+
+
+
+    /**
+     * @desc 修改公司详情信息
+     *
+     */
+    @PostMapping("/modifyFirmPurchase")
+    @ResponseBody
+    public Result<Boolean> modifyFirmPurchase(@RequestBody FirmPurchase recive)  {
+        logger.info("receive : /upload/modifyFirmPurchase");
+        Result<Boolean> rs = new Result<>();
+        FirmShowPurchase firmshow = new FirmShowPurchase();
+        if(firmPurchaseService.updateFirmPurchase(recive)){
+            RecToEntity.firmTransfer(recive, firmshow);
+
+            if(showPurchaseSevice.updateFirmShow(firmshow)){
+                rs.setCode(200);
+                rs.setMsg("修改成功");
+                rs.setData(true);
+            }else{
+                rs.setCode(500);
+                rs.setMsg("修改失败");
+                rs.setData(false);
+            }
+        }else{
+            rs.setCode(500);
+            rs.setMsg("修改失败");
+            rs.setData(false);
+        }
 
         return rs;
     }
+
+    @PostMapping("/deleteFirmPurchase")
+    @ResponseBody
+    public Result<Boolean> deleteFirmPurchase(@RequestBody Integer id)  {
+        Result<Boolean> rs = new Result<>();
+        boolean ret = firmPurchaseService.deleteFirmPurchase(id);
+        showPurchaseSevice.deleteFirmShowPurchase(id);
+        if(ret){
+            rs.setData(ret);
+            rs.setCode(200);
+            rs.setMsg("删除成功！");
+        }else{
+            rs.setData(ret);
+            rs.setCode(500);
+            rs.setMsg("删除失败！");
+        }
+        return rs;
+    }
+
+
+
 
 
 }

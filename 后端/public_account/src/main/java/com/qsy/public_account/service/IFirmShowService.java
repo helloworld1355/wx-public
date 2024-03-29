@@ -19,7 +19,7 @@ public interface IFirmShowService {
     public boolean addFirmShow(FirmShow firmInfo);
     public boolean updateFirmShow(FirmShow firmInfo);
     public List<FirmShow> getFirmInfoList(int page, int size, String location, String year, String sector, String taxable);
-
+    public boolean deleteFirmShow(Integer id);
 
     List<FirmShow> getMyFirmInfoList(List<Integer> idlist);
 }

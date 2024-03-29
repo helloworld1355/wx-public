@@ -67,6 +67,16 @@ public class FirmShowServiceImpl implements IFirmShowService {
         }
     }
 
+    @Override
+    public boolean deleteFirmShow(Integer id){
+        if(firmShowMapper.deleteById(id) > 0){
+            return true;
+        }else{
+            return false;
+        }
+
+    }
+
 
     /**
      * @desc 分页查询公司信息

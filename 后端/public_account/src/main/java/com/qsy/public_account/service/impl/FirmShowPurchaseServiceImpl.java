@@ -68,6 +68,15 @@ public class FirmShowPurchaseServiceImpl implements IFirmShowPurchaseService {
         }
     }
 
+    @Override
+    public boolean deleteFirmShowPurchase(Integer id){
+        if(firmShowPurchaseMapper.deleteById(id) > 0){
+            return true;
+        }else{
+            return false;
+        }
+
+    }
 
     /**
      * @desc 分页查询公司信息
