@@ -29,6 +29,15 @@
 		    
 		},
 		{
+			"path" : "pages/publish/modify",
+			"style" : 
+			{
+				// "navigationBarTitleText" : "",
+				"titleNView": false,
+				"enablePullDownRefresh" : false
+			}
+		},
+		{
 			"path" : "pages/my/my",
 			"style" : 
 			{
@@ -50,14 +59,15 @@
     ],
 	"tabBar": {
 		"color": "#000",
-		"height": "6vh",
+		"height": "8vh",
 		"selectedColor": "#3cc51f",
 		"borderStyle": "black",
 		"backgroundColor": "#ffffff",
+		"fontSize": "30rpx",
 		"list": [
 			{
 				"pagePath": "pages/index/index",
-				"text": "查询页面"
+				"text": "惠企转"
 			},
 			{
 				"pagePath": "pages/publish/publish",

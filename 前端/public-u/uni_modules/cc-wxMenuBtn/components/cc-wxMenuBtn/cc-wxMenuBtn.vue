@@ -1,6 +1,6 @@
 <template>
 	<view>
-		<view class="inputView" @click="goClick">
+		<view class="inputView" >
 			<image class="iconImg" mode="aspectFill" :src="icon"></image>
 
 			<text class="leftTitle">{{leftTitle}}</text>
@@ -35,12 +35,6 @@
 			}
 		},
 		methods: {
-			goClick(e) {
-
-
-				this.$emit("click", e);
-
-			},
 
 		}
 

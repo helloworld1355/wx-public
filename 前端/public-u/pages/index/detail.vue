@@ -18,7 +18,7 @@
 			
 			<!-- 公司详情 -->
 			<view class="row" >
-				<view v-if="firmData.hasOwnProperty('firmName')" class="title">
+				<view v-if="firmData && firmData.hasOwnProperty('firmName')" class="title">
 					<view class="scripe"></view>
 					公司基本信息
 				</view>
@@ -28,7 +28,7 @@
 				</view>
 				
 				<!-- 公司名称 -->
-				<view v-if="firmData.hasOwnProperty('firmName')"  class="line" style="display: flex;">
+				<view v-if="firmData && firmData.hasOwnProperty('firmName')"  class="line" style="display: flex;">
 					<view class="line-text" >
 						公司名称：
 					</view>
@@ -36,7 +36,7 @@
 				</view>
 				
 			<!-- 行业选择 -->
-				<view  v-if="firmData.hasOwnProperty('firmSectorType')"  class="line">
+				<view  v-if="firmData && firmData.hasOwnProperty('firmSectorType')"  class="line">
 					<view class="line-text">行业：
 					</view>
 					
@@ -46,7 +46,7 @@
 				
 				
 				<!-- 地区选择器 -->
-				<view  v-if="firmData.hasOwnProperty('firmLocation')"  class="line">
+				<view  v-if="firmData && firmData.hasOwnProperty('firmLocation')"  class="line">
 					<view class="line-text">
 						注册地址：
 					</view>
@@ -55,7 +55,7 @@
 				</view>	
 				
 				<!-- 详细地址选择 -->
-				<view  v-if="firmData.hasOwnProperty('firmLocationDetail')"  class="line">
+				<view  v-if="firmData && firmData.hasOwnProperty('firmLocationDetail')"  class="line">
 					<view class="line-text">
 						详细地址：
 					</view>
@@ -65,7 +65,7 @@
 				
 				
 				<!-- 注册资本 -->
-				<view  v-if="firmData.hasOwnProperty('firmRegistCapital')"  class="line" style="display: flex;">
+				<view  v-if="firmData && firmData.hasOwnProperty('firmRegistCapital')"  class="line" style="display: flex;">
 					<view class="line-text">
 						注册资本：
 					</view>
@@ -74,7 +74,7 @@
 				</view>
 				
 				<!-- 营业范围 -->
-				<view  v-if="firmData.hasOwnProperty('firmBusinessScope')"  class="line" >
+				<view  v-if="firmData && firmData.hasOwnProperty('firmBusinessScope')"  class="line" >
 					<view class="line-text">
 						营业范围：
 					</view>
@@ -84,7 +84,7 @@
 				
 				
 				<!-- 纳税性质 -->
-				<view  v-if="firmData.hasOwnProperty('firmTaxableType')"  class="line">
+				<view  v-if="firmData && firmData.hasOwnProperty('firmTaxableType')"  class="line">
 					<view class="line-text">
 						纳税性质：
 					</view>
@@ -92,7 +92,7 @@
 				</view>
 				
 				<!-- 注册时间 -->
-				<view  v-if="firmData.hasOwnProperty('firmEstablishDate')"  class="line" >
+				<view  v-if="firmData && firmData.hasOwnProperty('firmEstablishDate')"  class="line" >
 					<view class="line-text"> 
 						注册时间：
 					</view>
@@ -101,7 +101,7 @@
 				</view>
 				
 				<!-- 归属税局 -->
-				<view  v-if="firmData.hasOwnProperty('firmTaxBelong')"  class="line">
+				<view  v-if="firmData && firmData.hasOwnProperty('firmTaxBelong')"  class="line">
 					<view class="line-text">
 						归属税局：
 					</view>
@@ -116,7 +116,7 @@
 					联系人信息
 				</view>
 				<!-- 联系人 -->
-				<view  v-if="firmData.hasOwnProperty('firmContacts')"  class="line" >
+				<view v-if="firmData && firmData.hasOwnProperty('firmContacts')"  class="line" >		<!--  -->
 					<view class="line-text">
 						联系人：
 					</view>
@@ -125,7 +125,7 @@
 				</view>	
 					
 				<!-- 联系人电话 -->
-				<view  v-if="firmData.hasOwnProperty('firmContactsPhone')"  class="line" >
+				<view  v-if="firmData && firmData.hasOwnProperty('firmContactsPhone')"  class="line" >
 					<view class="line-text">
 						电话：
 					</view>
@@ -133,14 +133,14 @@
 								
 				</view>
 				
-				<view  v-if="firmData.hasOwnProperty('firmPriceTransfer')"  class="line" >
-					<view v-if="firmData.hasOwnProperty('firmName')" class="line-text">
+				<view  v-if="firmData && firmData.hasOwnProperty('firmPriceTransfer')"  class="line" >
+					<view v-if="firmData && firmData.hasOwnProperty('firmName')" class="line-text">
 						售价：
 					</view>
 					<view v-else class="line-text">
 						求购价：
 					</view>
-					<view v-if="firmData.firmPriceTransfer" class="uni-input" >{{ firmData.firmPriceTransfer }} 元</view>	
+					<view v-if="firmData && firmData.firmPriceTransfer" class="uni-input" >{{ firmData.firmPriceTransfer }} 元</view>	
 					<view v-else class="uni-input" >面议</view>
 				</view>
 				
@@ -206,16 +206,12 @@
 				}
 				uni.request({
 					url:config.domain + typeUrl,
-					header: {  
-						'Content-Type': 'application/x-www-form-urlencoded'  
-					}, 
-					data:{
-						id:id
-					},
+					dataType:'application/json', 
+					data:id,
 					method:'POST',
 					success(res) {
-						console.log("get:",res);
-						that.firmData = res.data.data;
+						let tempdata = JSON.parse(res.data);
+						that.firmData = tempdata.data;
 					}
 				})
 			},

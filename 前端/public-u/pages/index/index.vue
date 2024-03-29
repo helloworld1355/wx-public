@@ -640,7 +640,7 @@
 		/* justify-content: center; */
 		/* align-items: center;  */
 		/* height: calc(80vh); */
-		height: 94vh;
+		height: 92vh;
 		position: relative;
 		background: whitesmoke;
 		
