@@ -425,7 +425,7 @@
 		onLoad() {
 			let that = this;
 			uni.getStorage({						// 如果有缓存则读缓存
-				key:'uploadData-temp-transfer',
+				key:'uploadData-publish-temp-transfer',
 				success(res) {
 					that.uploadData = res.data;
 				}
@@ -470,9 +470,9 @@
 				console.log("进行保存");
 				let tempkey = '';
 				if(that.isTransfer){
-					tempkey = 'uploadData-temp-transfer';
+					tempkey = 'uploadData-publish-temp-transfer';
 				}else{
-					tempkey = 'uploadData-temp-purchase';
+					tempkey = 'uploadData-publish-temp-purchase';
 				}
 				uni.setStorage({
 					key: tempkey,
@@ -491,7 +491,7 @@
 				let tempkey = '';
 				if(str == 'transfer'){
 					if(this.isTransfer != 1){
-						tempkey = 'uploadData-temp-transfer';
+						tempkey = 'uploadData-publish-temp-transfer';
 						this.isTransfer = 1;
 						this.sectorsData.shift();
 						this.yearData.shift();
@@ -518,7 +518,7 @@
 				}
 				if(str == 'purchase'){
 					if(this.isTransfer != 0){
-						tempkey = 'uploadData-temp-purchase';
+						tempkey = 'uploadData-publish-temp-purchase';
 						this.isTransfer = 0;
 						this.sectorsData.unshift('全部');
 						this.yearData.unshift('全部');
@@ -561,11 +561,13 @@
 				let that = this;
 				let typeUrl = '';
 				let tempuploadData = '';
-				var tempkey = '';
+				var localkey = '';
+				let tempkey = '';
 				
 				if(!that.isTransfer){
 					typeUrl = 'addFirmPurchase';
-					tempkey = 'localdata-purchase';
+					localkey = 'localdata-purchase';
+					tempkey = 'uploadData-publish-temp-purchase';
 					
 					that.purchaseData = Object.keys(that.purchaseData).reduce((acc, key) => {
 					    if (that.uploadData.hasOwnProperty(key)) {
@@ -578,7 +580,8 @@
 					console.log("赋值结束：",that.purchaseData);
 				}else{
 					typeUrl = 'addFirmInfo';
-					tempkey = 'localdata-transfer';
+					localkey = 'localdata-transfer';
+					tempkey = 'uploadData-publish-temp-transfer';
 					tempuploadData = that.uploadData;
 				}
 				
@@ -618,7 +621,7 @@
 							var tempid = tempRes.data	// 从后端获取的本次提交的id
 							var tempdata = [];
 							uni.getStorage({
-								key: tempkey,
+								key: localkey,
 								success(res) {
 									tempdata = JSON.parse(res.data);
 									console.log("getdata :",tempdata);
@@ -628,7 +631,7 @@
 									tempdata.push(tempid);
 									uni.setStorage({
 										data: JSON.stringify(tempdata),
-										key: tempkey,
+										key: localkey,
 										success(res) {
 											console.log("提交缓存：",tempdata);
 										}
@@ -640,6 +643,9 @@
 								content:'提交成功！',
 								success() {
 									that.uploadData = [];
+									uni.removeStorage({
+										key: tempkey
+									})
 									uni.reLaunch({
 										url:'/pages/index/index'
 									})
