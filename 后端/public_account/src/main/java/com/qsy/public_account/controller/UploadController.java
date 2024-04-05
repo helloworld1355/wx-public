@@ -50,6 +50,7 @@ public class UploadController {
         RecToEntity.firmTransfer(recive, info);
         FirmShow firmshow = new FirmShow();
         info.setCreateTime(new Date());
+        info.setModifyTime(info.getCreateTime());
         info.setFirmStatusTransfer(0);
 
         if (firmservice.addFirmInfo(info)){
@@ -83,6 +84,7 @@ public class UploadController {
         logger.info("receive : /upload/modifyFirmInfo");
         Result<Boolean> rs = new Result<>();
         FirmShow firmshow = new FirmShow();
+        recive.setModifyTime(new Date());
         if(firmservice.updateFirmInfo(recive)){
             RecToEntity.firmTransfer(recive, firmshow);
 
@@ -104,6 +106,26 @@ public class UploadController {
         return rs;
     }
 
+    @PostMapping("/deleteFirmInfo")
+    @ResponseBody
+    public Result<Boolean> deleteFirmInfo(@RequestBody Integer id)  {
+        logger.info("接收到api请求 : /upload/deleteFirmInfo;");
+        Result<Boolean> rs = new Result<>();
+        boolean ret = firmPurchaseService.deleteFirmPurchase(id);
+        showService.deleteFirmShow(id);
+        if(ret){
+            rs.setData(ret);
+            rs.setCode(200);
+            rs.setMsg("删除成功！");
+        }else{
+            rs.setData(ret);
+            rs.setCode(500);
+            rs.setMsg("删除失败！");
+        }
+        return rs;
+    }
+
+
 
     /**
      * @desc 上传求购公司信息
@@ -119,6 +141,7 @@ public class UploadController {
         RecToEntity.firmTransfer(recive, purchase);
         FirmShowPurchase firmshow = new FirmShowPurchase();
         purchase.setCreateTime(new Date());
+        purchase.setModifyTime(purchase.getCreateTime());
         purchase.setFirmStatusTransfer(0);
 
         if (firmPurchaseService.addFirmPurchase(purchase)){
@@ -142,24 +165,6 @@ public class UploadController {
     }
 
 
-    @PostMapping("/deleteFirmInfo")
-    @ResponseBody
-    public Result<Boolean> deleteFirmInfo(@RequestBody Integer id)  {
-        logger.info("接收到api请求 : /upload/deleteFirmInfo;");
-        Result<Boolean> rs = new Result<>();
-        boolean ret = firmPurchaseService.deleteFirmPurchase(id);
-        showService.deleteFirmShow(id);
-        if(ret){
-            rs.setData(ret);
-            rs.setCode(200);
-            rs.setMsg("删除成功！");
-        }else{
-            rs.setData(ret);
-            rs.setCode(500);
-            rs.setMsg("删除失败！");
-        }
-        return rs;
-    }
 
 
 
@@ -175,6 +180,7 @@ public class UploadController {
         logger.info("receive : /upload/modifyFirmPurchase");
         Result<Boolean> rs = new Result<>();
         FirmShowPurchase firmshow = new FirmShowPurchase();
+        recive.setModifyTime(new Date());
         if(firmPurchaseService.updateFirmPurchase(recive)){
             RecToEntity.firmTransfer(recive, firmshow);
 

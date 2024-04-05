@@ -35,6 +35,7 @@ public class FirmShow implements Serializable {
 
 //    @ApiModelProperty("@desc  创建字段时间	@sample  1年")
     private Date createTime;
+    private Date modifyTime;
 
 //    @ApiModelProperty("@desc  公司行业性质	@sample  科技")
     private String firmSectorType;

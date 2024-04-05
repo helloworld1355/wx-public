@@ -87,9 +87,17 @@ public class FirmShowPurchaseServiceImpl implements IFirmShowPurchaseService {
     public List<FirmShowPurchase> getFirmInfoList(int page, int size, String location, String year, String sector, String taxable){
         List<FirmShowPurchase> list;
         QueryWrapper<FirmShowPurchase> wrapper = new QueryWrapper<>();
+        wrapper.orderByDesc("modify_time");
         wrapper.eq("firm_status_transfer",0);
-        if(!"".equals(location))
-            wrapper.eq("firm_location",location);
+        if(!"".equals(location)){
+            if(location.contains("全市")){
+                String[] fruits = location.split("-");
+                wrapper.and(i ->i.like("firm_location",fruits[0]).like("firm_location",fruits[1]));
+            }else{
+                wrapper.eq("firm_location",location);
+            }
+
+        }
         if(!"".equals(sector))
             wrapper.eq("firm_sector_type",sector);
         if (!"".equals(taxable))
@@ -100,6 +108,7 @@ public class FirmShowPurchaseServiceImpl implements IFirmShowPurchaseService {
 
         IPage<FirmShowPurchase> resultPage = firmShowPurchaseMapper.selectPage(pageFirm,wrapper);
         list = resultPage.getRecords();
+
         return list;
     }
 

@@ -50,6 +50,7 @@ public class FirmShowPurchase implements Serializable {
 
 //    @ApiModelProperty("@desc  创建字段时间	@sample  1年")
     private Date createTime;
+    private Date modifyTime;
 
     @Override
     public String toString() {
