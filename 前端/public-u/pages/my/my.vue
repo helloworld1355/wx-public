@@ -2,7 +2,9 @@
     <view class="content">
         <view class="top-contain">
 			<image class="top-image" mode="aspectFit" src="../../static/logo.png"></image>
-			<view >暂无</view>
+			<view >
+				<button @click="wxLogin">登录</button>
+			</view>
 		</view>
 		
         <cc-wxMenuBtn leftTitle="我的发布" icon="../../static/my_enroll.png" @click="toMyPublishClick"></cc-wxMenuBtn>
@@ -44,11 +46,11 @@
 			 * 
 			 */
 			wxLogin(){
-				var url = 'http://10.177.13.153:8080/pages/my/my';
+				var url = 'http://localhost/pages/my/my';
 				var encodedUrl = encodeURIComponent(url);
 				console.log(encodedUrl);
 				window.location.href='https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxa079e1c44eb5786b&'+
-				'redirect_uri='+encodedUrl+'&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect';
+				'redirect_uri='+url+'&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect';
 			}
         }
     }

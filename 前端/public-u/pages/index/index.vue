@@ -24,8 +24,78 @@
 			
 			<!-- 选择区域 -->
 			<view class="select">
+				
+				<view class="select-picker " >
+					<!-- <view class="select-mid" > -->
+							<picker  mode="multiSelector"  @columnchange="pickerColumnChange" @change="pickerClick($event, 'multiArrary')" :value="multiIndex" :range="multiArrary">
+								<view v-if="showLocation != '全部'" class="select-picker-input ispicker" >
+									<view class="picker-text">
+										{{ showLocation }}
+									</view>
+									<image class="select-picker-image" src="../../static/image/down_select.png"></image>
+								</view>
+								<view v-else class="select-picker-input " >
+									<view class="picker-text">
+										地区
+									</view>
+									<image class="select-picker-image" src="../../static/image/down.png"></image>
+								</view>
+							</picker>
+							
+							<picker   @change="pickerClick($event, 'yearData')" :value="yearData_index" :range="yearData" >
+								<view v-if="yearData[yearData_index] != '全部'" class="select-picker-input ispicker ">
+									<view class="picker-text">
+										{{yearData[yearData_index]}}
+									</view>
+									<image class="select-picker-image" src="../../static/image/down_select.png"></image>
+								</view>
+								<view v-else class="select-picker-input ">
+									<view class="picker-text">
+										年份
+									</view>
+									<image class="select-picker-image" src="../../static/image/down.png"></image>
+								</view>
+							</picker>
+							
+							<picker  @change="pickerClick($event, 'sectorsData')" :value="sectorsData_index" :range="sectorsData">
+								<view v-if="sectorsData[sectorsData_index] != '全部'" class="select-picker-input ispicker">
+									<view class="picker-text">
+										{{sectorsData[sectorsData_index]}}
+									</view>
+									
+									<image class="select-picker-image" src="../../static/image/down_select.png"></image>
+								</view>
+								<view v-else class="select-picker-input ">
+									<view class="picker-text">
+										行业
+									</view>
+									
+									<image class="select-picker-image" src="../../static/image/down.png"></image>
+								</view>
+							</picker>
+							
+							<picker  @change="pickerClick($event, 'taxableData')" :value="taxableData_index" :range="taxableData">
+								<view v-if="taxableData[taxableData_index] != '全部'" class="select-picker-input ispicker">
+									<view class="picker-text">
+										{{taxableData[taxableData_index]}}
+									</view>
+									<image class="select-picker-image" src="../../static/image/down_select.png"></image>
+								</view>
+								<view v-else class="select-picker-input ">
+									<view class="picker-text">
+										性质
+									</view>
+									<image class="select-picker-image" src="../../static/image/down.png"></image>
+								</view>
+							</picker>
+							<button class="select-search" @click="searchFirm" >查询</button>
+					<!-- </view> -->
+					
+				</view>
+				
+				
 			
-				<view class="select-picker " style="margin-top: 20rpx;" >
+				<!-- <view class="select-picker " style="margin-top: 20rpx;" >
 					<view class="select-mid" >
 						<view class="select-picker-input" >
 							区域：
@@ -48,12 +118,12 @@
 						<view class="select-picker-db">
 							<picker  @change="pickerClick($event, 'yearData')" :value="yearData_index" :range="yearData" >
 								<view class="select-picker-input ispicker">{{yearData[yearData_index]}}</view>
-								<!-- <view v-else class="select-picker-input ispicker">全部</view> -->
+								
 							</picker>
 						</view>
 					</view>
 					
-					<!-- 行业 -->
+					
 					<view class="select-mid">
 						<view class="select-picker-input" > 
 							行业：
@@ -68,7 +138,7 @@
 				</view>
 				
 				<view class="select-picker" style="margin-bottom: 20rpx;">
-					<!-- 纳税性质 -->
+				
 					<view class="select-mid select-mid-left"  style="flex: 2;" >
 						<view class="select-picker-input">
 							纳税性质：
@@ -81,7 +151,7 @@
 					</view>
 					
 					<button class="select-search" @click="searchFirm" >查询</button>
-				</view>
+				</view> -->
 				
 			</view>
 			
@@ -134,7 +204,10 @@
 					</view>
 				</view>
 				
-				<view style="margin: 20rpx 0 30rpx 0;" v-if="isloading">已无更多</view>
+				<view style="margin: 20rpx 0 30rpx 0;" v-if="isloading">
+					已无更多!
+					共{{ firmsData.length }}条数据
+				</view>
 			</view>
 			<view v-else class="scroll-firms-none">
 				无数据！
@@ -171,6 +244,7 @@
 				
 				// 区域选择器：首页区域选择需要到县
 				showLocation:'全部',
+				showLocation_inshow:'全部',
 				provinces: [],
 				cities: [],
 				districts: [],
@@ -240,10 +314,16 @@
 				uni.getStorage({
 					key: 'areaData',
 					success:function(res){
-						console.log("获取地域缓存成功！！");
+						
 						that.provinces = res.data.provinces;
 						that.cities = res.data.cities;
 						that.districts = res.data.districts;
+						for(var i=0; i<that.districts.length; i++){
+							for(var k=0; k<that.districts[i].length; k++){
+								that.districts[i][k].unshift("全市");
+							}
+						}
+						console.log(that.districts.length);
 						that.provinces.unshift('全部');
 						that.cities.unshift('');
 						that.districts.unshift('');
@@ -252,7 +332,7 @@
 						that.multiArrary[1] = that.cities[0];
 						that.multiArrary[2] = that.districts[0][0];
 						
-						that.showLocation = that.provinces[0] + "-" + that.cities[0][0] + "-" + that.districts[0][0][0] ;
+						// that.showLocation = that.provinces[0] + "-" + that.cities[0][0] + "-" + that.districts[0][0][0] ;
 					},
 					fail:function(res){
 						console.log("获取缓存失败，重新拉取数据!",res);
@@ -261,7 +341,9 @@
 				})
 				
 				// 获取公司数据
-				that.uploadFirmsInfo();
+				setTimeout(function(){
+					that.uploadFirmsInfo();
+				},50);
 			},
 			
 			// 点击进入详情
@@ -306,11 +388,12 @@
 				
 					success(res) {
 						// that.uploadAreaData();
-						const sectorList = res.data.data.sectors.split(',');
-						const taxableList = res.data.data.taxables.split(',');
-						const yearList = res.data.data.years.split(',');
+						var tempdata = res.data.data;
+						const sectorList = tempdata.sectors.split(',');
+						const taxableList = tempdata.taxables.split(',');
+						const yearList = tempdata.years.split(',');
 						console.log("years:",yearList);
-						var imageTemp = res.data.data.imgSrc.split(';;');
+						var imageTemp = tempdata.imgSrc.split(';;');
 						// 存入成立年份
 						for(var i=0; i<yearList.length - 1; i++){
 							that.yearData.push(yearList[i]);
@@ -370,6 +453,7 @@
 					typeUrl = 'firmShowPurchase';
 				}
 				var sector = that.sectorsData[that.sectorsData_index];
+
 				var taxable = that.taxableData[that.taxableData_index];
 				var year = that.yearData[that.yearData_index];
 				var location = that.showLocation;
@@ -381,6 +465,7 @@
 					year = '';
 				if(location == '全部')
 					location = '';
+				console.log("that.sectorsData = ",typeof that.sectorsData);
 				
 				uni.request({
 					url:config.domain + typeUrl,
@@ -402,9 +487,11 @@
 							that.isloading = 1;
 						for(var i=0; i<res.data.length; i++){
 							that.firmsData.push(res.data[i]);
-							that.getTime(that.firmsData);
 							// that.showFirms.push(res.data[i]);
 						}
+						
+						
+						that.getTime(that.firmsData);
 						
 					}
 				})
@@ -534,7 +621,7 @@
 						that.multiArrary[1] = that.cities[0];
 						that.multiArrary[2] = that.districts[0][0];
 						
-						that.showLocation = that.provinces[0] + "-" + that.cities[0][0] + "-" + that.districts[0][0][0] ;
+						// that.showLocation = that.provinces[0] + "-" + that.cities[0][0] + "-" + that.districts[0][0][0] ;
 						
 
 					})
@@ -582,7 +669,7 @@
 				const nowTime = new Date() ;
 				for(var i = 0; i < data.length; i++){
 					
-					var temp = nowTime - new Date(data[i].createTime);
+					var temp = nowTime - new Date(data[i].modifyTime);
 					temp =Math.round( temp / 3600000);
 					var hour = ~~(temp / 24);
 					var publish = '';
@@ -731,9 +818,9 @@
 		/* justify-content: flex-start; */
 		align-items: center;
 		justify-content: space-between;
-		width: 90%;
+		width: 100%;
 		/* background-color: aquamarine; */
-		margin-top: 10rpx;
+		/* margin-top: 10rpx; */
 		
 	}
 	.select-mid-left{
@@ -744,9 +831,12 @@
 		display: flex;
 		flex-direction: row;
 		position: relative;
-		align-items: center;
-		background-color: whitesmoke;
-		border-radius: 20rpx;
+		width: 100%;
+		/* padding: 0 10rpx; */
+		/* align-items: center; */
+		/* background-color: whitesmoke; */
+		/* border-radius: 20rpx; */
+		
 	}
 	.select-bottom-contain{
 		display: flex;
@@ -776,24 +866,43 @@
 		/* border: 1rpx solid black; */
 		border-radius: 5rpx;
 	}
+	.ispicker{
+		color: #0088ff;
+	}
 	.select-picker-input{
 		height: 40rpx;
+		
 		padding: 15rpx 0 15rpx 0;
 		padding-left: 10rpx;
 		line-height:40rpx;
+		display: flex;
+		flex-direction: row;
 		
 		/* font-size:35rpx; */
 	}
-	.ispicker{
-		
+	.picker-text{
+		width: 100rpx;
+		overflow: scroll;
+		text-align: right;
+		/* text-overflow: ellipsis; */
+		white-space: nowrap;
 	}
+	.select-picker-image{
+		height: 40rpx;
+		width: 40rpx;
+	}
+	
+	
 	.select-search{
-		flex: 1;
+		/* flex: 1; */
 		/* margin: 10rpx 0px 10rpx 10rpx;*/
 		padding: 0;
-		
+		width: 100%;
+		margin-left: 40rpx;
 		font-size: 28rpx;
-
+		/* color: #3cc51f; */
+		border-radius: 20rpx;
+		background-color: #3cc51f;
 	}
 	
 	
